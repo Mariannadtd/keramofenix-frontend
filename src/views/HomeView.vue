@@ -30,7 +30,7 @@ const slides = [
   },
   {
     src: new URL("../assets/img/yamap.png", import.meta.url).href,
-    title: "Приходи к нам в гости. г. Сочи, ул. Гагарина 63",
+    title: "Приходи к нам в гости. г. Сочи, ул. Гагарина 63 и ул. Донская 3/3",
     desc: "",
   },
   {
@@ -55,16 +55,16 @@ onMounted(async () => {
 });
 
 const interiors = computed(() =>
-  products.value.filter((p) => p.category === "interiors")
+  products.value.filter((p) => p.category === "interiors"),
 );
 const exteriors = computed(() =>
-  products.value.filter((p) => p.category === "exteriors")
+  products.value.filter((p) => p.category === "exteriors"),
 );
 const floors = computed(() =>
-  products.value.filter((p) => p.category === "floors")
+  products.value.filter((p) => p.category === "floors"),
 );
 const fittings = computed(() =>
-  products.value.filter((p) => p.category === "fittings")
+  products.value.filter((p) => p.category === "fittings"),
 );
 
 function getRandomItems(arr, count) {
@@ -77,16 +77,16 @@ function getRandomItems(arr, count) {
 }
 
 const interiorsRandom = computed(() =>
-  getRandomItems(interiors.value, Math.min(6, interiors.value.length))
+  getRandomItems(interiors.value, Math.min(6, interiors.value.length)),
 );
 const exteriorsRandom = computed(() =>
-  getRandomItems(exteriors.value, Math.min(6, exteriors.value.length))
+  getRandomItems(exteriors.value, Math.min(6, exteriors.value.length)),
 );
 const floorsRandom = computed(() =>
-  getRandomItems(floors.value, Math.min(6, floors.value.length))
+  getRandomItems(floors.value, Math.min(6, floors.value.length)),
 );
 const fittingsRandom = computed(() =>
-  getRandomItems(fittings.value, Math.min(6, fittings.value.length))
+  getRandomItems(fittings.value, Math.min(6, fittings.value.length)),
 );
 </script>
 
@@ -223,24 +223,19 @@ const fittingsRandom = computed(() =>
 :deep(.slider .slide__title)
   display: inline-block
   color: #000
-  font-size: 4.7rem
+  font-size: 4rem
   font-weight: 700
-  font-family: "EB Garamond", serif
-  font-style: italic
+  font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif
+  color: var(--main-color)
   line-height: 1.4
-  text-decoration-line: underline
-  text-decoration-color: var(--this)
-  text-decoration-thickness: 1rem
-  text-underline-offset: -.5rem
-  text-decoration-skip-ink: none
+  white-space: pre-line
 
 @media (max-width: $small)
   :deep(.slider .slide__title)
-    font-size: 2.7rem !important
-    background-color: rgba(255,255,255,0.1)
-    backdrop-filter: blur(6px)
+    font-size: 2.2rem !important
+    background-color: white
+    backdrop-filter: blur(1px)
     -webkit-backdrop-filter: blur(6px)
-    text-shadow: 0 0 10px rgba(255,255,255,0.9)
     border-radius: .5rem
     padding-left: 1rem
     width: 90%
@@ -267,7 +262,6 @@ const fittingsRandom = computed(() =>
     width: 100% !important
     padding: 1rem
 
-/* ===== ВОТ ТУТ ВОЗВРАТ КАК БЫЛО ДЛЯ 1-2-3 ===== */
 :deep(.slider .slide__img)
   display: block
   margin: 0 !important
@@ -294,17 +288,33 @@ const fittingsRandom = computed(() =>
 :deep(.slider .slide:last-child .slide__img)
   float: none !important
   display: block
-  width: 100%
-  height: 100%
-  object-fit: cover
-  transform-origin: center
-  transform: scale(0.9) translateX(44rem) translateY(-1.6rem) !important
+  width: 120%
+  height: 100rem
+  object-fit: contain
+  position: absolute
+  right: -40rem
+  top: 50%
+  transform: translateY(-50%)
 
-  @media (max-width: $xx-large)
-    transform: scale(0.9) translateX(30rem) translateY(-1.6rem) !important
+@media (max-width: $small)
+  :deep(.slider .slide:last-child .slide__img)
+    width: 160%
+    height: auto
+    right: -10rem
+    top: 55%
+
+.promo
+  height: 40rem
+  display: flex
+  align-items: center
+  justify-content: center
+  background: #fff
   @media (max-width: $small)
-    transform: scale(0.9) translateX(10rem) translateY(-30rem) !important
-    width: 75rem !important
-    height: 75rem !important
-    margin-top: -28rem
+    height: 25rem
+
+  img
+    width: 100%
+    height: 100%
+    object-fit: contain
+    display: block
 </style>

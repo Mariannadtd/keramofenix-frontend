@@ -5,8 +5,6 @@ import Modal from "./UI/Modal.vue";
 import SocialLinks from "./SocialLinks.vue";
 import { RouterLink } from "vue-router";
 
-import logoMask from "../assets/img/logo20.png";
-
 const links = [
   { name: "Межкомнатные двери", href: "/interiors", class: "first__link" },
   { name: "Входные двери", href: "/exteriors", class: "second__link" },
@@ -41,18 +39,24 @@ function toggleNav() {
       </button>
 
       <a href="/" class="header__logo_group">
-        <span
+        <!-- <img
           class="header__logo_img"
-          role="img"
-          aria-label="Логотип"
-          :style="{ '--logo-mask': `url(${logoMask})` }"
-        ></span>
-        <p class="header__logo">Дверной<br />Ренессанс</p>
+          src="../assets/img/logo.png"
+          alt="Логотип"
+        /> -->
+        <div class="lg">КФ</div>
+        <div>
+          <p class="header__logo">КерамоФеникс</p>
+          <span class="header__par">двери пол плитка</span>
+        </div>
       </a>
 
       <router-link to="/contacts" class="header__geo">
         <img src="../assets/img/geo.png" alt="Геолокация" />
-        <span>Сочи, ул. Гагарина, 63<br />Ежедневно с 9:00 до 21:00</span>
+        <span
+          >Сочи, ул. Гагарина, 63<br />Донская 3/3<br />Ежедневно с 9:00 до
+          21:00</span
+        >
       </router-link>
 
       <div class="header__call">
@@ -85,6 +89,12 @@ function toggleNav() {
 <style scoped lang="sass">
 @import "../assets/css/main.sass"
 
+.lg
+  font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif
+  font-weight: 800
+  font-size: 3rem
+  color: var(--main-color)
+
 header
   position: relative
   padding: 0
@@ -106,10 +116,9 @@ header
   .header__logo
     margin: 0
     line-height: 1.05
-    font-family: 'EB Garamond', serif
+    font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif
     font-size: 1.5rem
     font-weight: 800
-    text-transform: uppercase
     color: var(--third-color)
     display: flex
     align-items: center
@@ -127,20 +136,10 @@ header
     margin-inline-start: -1rem
 
   .header__logo_img
-    width: 7rem
-    height: 7rem
+    width: 4rem
     display: block
-    background-color: var(--third-color)
-    -webkit-mask-image: var(--logo-mask)
-    mask-image: var(--logo-mask)
-    -webkit-mask-repeat: no-repeat
-    mask-repeat: no-repeat
-    -webkit-mask-position: center
-    mask-position: center
-    -webkit-mask-size: contain
-    mask-size: contain
     margin: 0
-    padding: 0
+    padding: 0.5rem
 
   .header__geo
     display: flex
@@ -174,7 +173,8 @@ nav.nav-container
 
   .nav
     max-width: 1530px !important
-    font-family: 'EB Garamond', serif
+    font-family: 'Roboto', sans-serif
+    font-weight: 400
     margin: 0 auto
     display: flex
     justify-content: space-between
