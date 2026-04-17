@@ -91,6 +91,8 @@ const fittingsRandom = computed(() =>
 </script>
 
 <template>
+  <h1 class="sr-only">КерамоФеникс — двери, полы и плитка в Сочи</h1>
+
   <section class="home">
     <div class="home__slider">
       <Slider
@@ -104,6 +106,7 @@ const fittingsRandom = computed(() =>
   </section>
 
   <section>
+    <h1 class="sr-only">КерамоФеникс — двери, полы и плитка в Сочи</h1>
     <Catalog
       class="home__catalog"
       title="Межкомнатные двери"
@@ -171,6 +174,16 @@ const fittingsRandom = computed(() =>
 
 <style scoped lang="sass">
 @import "../assets/css/main.sass"
+.sr-only
+  position: absolute
+  width: 1px
+  height: 1px
+  padding: 0
+  margin: -1px
+  overflow: hidden
+  clip: rect(0, 0, 0, 0)
+  white-space: nowrap
+  border: 0
 
 .home__slider
   position: relative
