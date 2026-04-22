@@ -39,12 +39,11 @@ function toggleNav() {
       </button>
 
       <a href="/" class="header__logo_group">
-        <!-- <img
+        <img
           class="header__logo_img"
           src="../assets/img/logo.png"
           alt="Логотип"
-        /> -->
-        <div class="lg">КФ</div>
+        />
         <div>
           <p class="header__logo">КерамоФеникс</p>
           <span class="header__par">двери пол плитка</span>
@@ -140,6 +139,9 @@ header
     display: block
     margin: 0
     padding: 0.5rem
+    @media (max-width: $small)
+      width: 3rem
+      padding-right: .7rem !important
 
   .header__geo
     display: flex
@@ -265,4 +267,8 @@ nav.nav-container
     gap: .6rem !important
     padding-left: 1.5rem
     padding-right: 1.5rem
+  .header__call
+    :deep(button)
+      font-size: 1.2rem
+      padding: .4rem .4rem
 </style>

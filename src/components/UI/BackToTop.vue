@@ -10,7 +10,7 @@ onMounted(() => {
     ([entry]) => {
       visible.value = !entry.isIntersecting;
     },
-    { root: null, threshold: 0 }
+    { root: null, threshold: 0 },
   );
   io.observe(sentinel.value);
 });
@@ -49,28 +49,28 @@ function scrollToTop() {
 .back-to-top
   all: unset
   position: fixed
-  right: 1.5rem
-  bottom: 1.5rem
-  width: 3rem
-  height: 3rem
+  right: 2.5rem
+  bottom: 2.5rem
+  width: 4rem
+  height: 4rem
 
   background: white
   border-radius: 50%
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2)
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3)
 
   display: flex
   align-items: center
   justify-content: center
 
-  transform: translateY(150%)
+  transform: translateY(200%)
   will-change: transform
   transition: transform .3s ease
   pointer-events: none
   cursor: pointer
 
   img
-    width: 1.5rem
-    height: 1.5rem
+    width: 2.5rem
+    height: 2.5rem
     transform: rotate(-90deg)
 
   &.visible

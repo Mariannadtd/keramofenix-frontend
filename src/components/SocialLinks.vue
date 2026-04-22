@@ -44,7 +44,7 @@ const itemCount = computed(() => cartStore.totalCount);
   margin: 0
   padding: 0
   @media (max-width: $small)
-    gap: .5rem
+    gap: .2rem
 
   li
     position: relative
@@ -59,6 +59,9 @@ const itemCount = computed(() => cartStore.totalCount);
       transition: transform .2s ease
       &:hover
         transform: scale(1.25)
+      @media (max-width: $small)
+        width: 2.3rem
+        height: 2.3rem
 
 .cart-badge
   position: absolute

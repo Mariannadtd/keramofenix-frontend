@@ -245,13 +245,13 @@ const fittingsRandom = computed(() =>
 
 @media (max-width: $small)
   :deep(.slider .slide__title)
-    font-size: 2.2rem !important
+    font-size: 2rem !important
     background-color: white
-    backdrop-filter: blur(1px)
-    -webkit-backdrop-filter: blur(6px)
+    backdrop-filter: blur(50px)
+    -webkit-backdrop-filter: blur(60px)
     border-radius: .5rem
-    padding-left: 1rem
-    width: 90%
+    padding-left: .5rem
+    width: 95%
 
 :deep(.slider .slide__caption)
   position: absolute
