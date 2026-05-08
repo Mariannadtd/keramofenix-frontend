@@ -1,0 +1,38 @@
+.catalog-controls
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: .75rem
+  margin-bottom: 2rem
+
+.search-wrap
+  width: 100%
+  max-width: 520px
+
+.search-wrap :deep(input)
+  width: 100%
+
+.filters-row
+  width: 100%
+  display: grid
+  grid-auto-rows: min-content
+  grid-template-columns: repeat(auto-fit, minmax(160px, max-content))
+  justify-content: center
+  align-items: start
+  gap: .5rem
+
+.skeleton-grid
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
+  gap: 1rem
+
+.no-results
+  text-align: center
+  margin: 1rem auto 2rem
+  font-size: 1.05rem
+  font-weight: 500
+  color: #b00
+
+.btn-reset
+  padding-top: 0.55rem
+  padding-bottom: 0.55rem

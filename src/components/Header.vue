@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import Button from "./UI/Button.vue";
 import Modal from "./UI/Modal.vue";
 import SocialLinks from "./SocialLinks.vue";
@@ -18,21 +18,82 @@ const links = [
 
 const showModal = ref(false);
 const showNav = ref(false);
+const headerRef = ref(null);
+const navRef = ref(null);
+const navAnchorRef = ref(null);
+const isNavPinned = ref(false);
+const navHeight = ref(0);
+const mobileHeaderHeight = ref(0);
+
+const DESKTOP_NAV_MIN_WIDTH = 993;
 
 function handleClick() {
   showModal.value = true;
 }
+
 function toggleNav() {
   showNav.value = !showNav.value;
 }
+
+function closeNav() {
+  showNav.value = false;
+}
+
+function isDesktopNav() {
+  return window.innerWidth >= DESKTOP_NAV_MIN_WIDTH;
+}
+
+function navAnchorTop() {
+  if (!navAnchorRef.value) return 0;
+  return navAnchorRef.value.getBoundingClientRect().top + window.scrollY;
+}
+
+function updateNavPin() {
+  if (!isDesktopNav()) {
+    isNavPinned.value = false;
+    return;
+  }
+
+  navHeight.value = navRef.value?.offsetHeight || navHeight.value;
+  isNavPinned.value = window.scrollY >= navAnchorTop();
+}
+
+function measureHeader() {
+  mobileHeaderHeight.value = headerRef.value?.offsetHeight || 0;
+}
+
+function measureLayout() {
+  measureHeader();
+  navHeight.value = navRef.value?.offsetHeight || 0;
+  updateNavPin();
+}
+
+watch(showNav, (isOpen) => {
+  if (isOpen) measureHeader();
+  document.body.style.overflow = isOpen ? "hidden" : "";
+});
+
+onMounted(() => {
+  requestAnimationFrame(measureLayout);
+  window.addEventListener("scroll", updateNavPin, { passive: true });
+  window.addEventListener("resize", measureLayout);
+});
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = "";
+  window.removeEventListener("scroll", updateNavPin);
+  window.removeEventListener("resize", measureLayout);
+});
 </script>
 
 <template>
-  <header v-auto-animate>
+  <header ref="headerRef" class="site-header" v-auto-animate>
     <div class="header__top">
       <button
         :class="['burger', { open: showNav }]"
         @click="toggleNav"
+        :aria-expanded="showNav"
+        aria-controls="main-nav"
         aria-label="Меню"
       >
         <span></span><span></span><span></span>
@@ -65,24 +126,39 @@ function toggleNav() {
 
       <SocialLinks />
     </div>
-
-    <nav v-auto-animate :class="['nav-container', { nav__active: showNav }]">
-      <ul class="nav">
-        <li v-for="link in links" :key="link.name">
-          <RouterLink
-            :to="link.href"
-            :class="link.class"
-            exact-active-class="is-active"
-            @click="showNav = false"
-          >
-            {{ link.name }}
-          </RouterLink>
-        </li>
-      </ul>
-    </nav>
-
-    <Modal v-if="showModal" @close="showModal = false" />
   </header>
+
+  <div
+    ref="navAnchorRef"
+    class="nav-anchor"
+    :style="{ height: isNavPinned ? `${navHeight}px` : '0px' }"
+  ></div>
+
+  <nav
+    id="main-nav"
+    ref="navRef"
+    v-auto-animate
+    :class="[
+      'nav-container',
+      { nav__active: showNav, nav__pinned: isNavPinned },
+    ]"
+    :style="{ '--mobile-header-height': `${mobileHeaderHeight}px` }"
+  >
+    <ul class="nav">
+      <li v-for="link in links" :key="link.name">
+        <RouterLink
+          :to="link.href"
+          :class="link.class"
+          exact-active-class="is-active"
+          @click="closeNav"
+        >
+          {{ link.name }}
+        </RouterLink>
+      </li>
+    </ul>
+  </nav>
+
+  <Modal v-if="showModal" @close="showModal = false" />
 </template>
 
 <style scoped lang="sass">
@@ -94,8 +170,9 @@ function toggleNav() {
   font-size: 3rem
   color: var(--main-color)
 
-header
+.site-header
   position: relative
+  z-index: 90
   padding: 0
   background-color: #fff
   margin-left:  calc(50% - 50vw)
@@ -164,7 +241,7 @@ header
 
 nav.nav-container
   position: relative
-  z-index: 1
+  z-index: 80
   margin-left:  calc(50% - 50vw)
   margin-right: calc(50% - 50vw)
   background: white
@@ -194,6 +271,19 @@ nav.nav-container
       &.is-active
         color: var(--third-color)
 
+.nav-anchor
+  height: 0
+  flex: none
+
+nav.nav-container.nav__pinned
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  margin-left: 0
+  margin-right: 0
+  z-index: 1000
+
 .burger
   display: none
   background: none
@@ -213,6 +303,9 @@ nav.nav-container
     transition: transform .3s ease, opacity .3s ease
     transform-origin: center
 
+.burger:focus
+  outline: none
+
 .burger.open span:nth-child(1)
   transform: translateY(6px) rotate(45deg)
 
@@ -226,28 +319,73 @@ nav.nav-container
   .burger
     display: flex
 
-  header
-    z-index: 10
-    position: relative
+  .site-header
+    z-index: 1100
+    position: sticky
+    top: 0
     border-bottom: 1px solid var(--second-color)
     box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.20)
 
   nav.nav-container
-    display: none
+    position: fixed
+    top: var(--mobile-header-height, 0px)
+    right: 0
+    bottom: 0
+    left: 0
+    z-index: 1000
+    width: 100vw
+    height: calc(100dvh - var(--mobile-header-height, 0px))
+    min-height: calc(100dvh - var(--mobile-header-height, 0px))
+    margin: 0
+    padding: 0
+    border: none
+    background: white
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    overflow-y: auto
+    transform: translateX(100%)
+    opacity: 0
+    visibility: hidden
+    pointer-events: none
+    box-shadow: -24px 0 48px rgba(0, 0, 0, .18)
+    transition: transform .35s ease, opacity .25s ease, visibility 0s linear .35s
+
+    .nav
+      width: min(100%, 42rem)
+      max-width: 42rem !important
+      flex-direction: column
+      justify-content: center
+      align-items: stretch
+      margin: 0 auto
+      padding: 2rem
+      gap: 0
+
+      li
+        border-bottom: 1px solid rgba(0, 0, 0, .08)
+
+        a
+          display: flex
+          justify-content: center
+          padding: 1.3rem 0
+          font-size: 2.2rem
+          text-align: center
 
   nav.nav-container.nav__active
-    display: block
-    position: absolute
-    top: calc(100%)
-    left: 0
+    transform: translateX(0)
+    opacity: 1
+    visibility: visible
+    pointer-events: auto
+    transition: transform .35s ease, opacity .25s ease
+
+  nav.nav-container.nav__pinned
+    position: fixed
+    top: var(--mobile-header-height, 0px)
     right: 0
-    background: white
-    z-index: 100
-    padding: 2rem 0
-    .nav
-      flex-direction: column
-      align-items: center
-      gap: 1rem
+    bottom: 0
+    left: 0
+    margin: 0
 
   .header__call p
     display: none
@@ -263,7 +401,7 @@ nav.nav-container
     margin-right: -0.5rem !important
   .header__logo
     margin-right: 0 !important
-  header .header__top
+  .site-header .header__top
     gap: .6rem !important
     padding-left: 1.5rem
     padding-right: 1.5rem

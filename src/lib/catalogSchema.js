@@ -479,6 +479,10 @@ export function formatPrice(val) {
   return Math.round(Number(val) || 0).toLocaleString("ru-RU");
 }
 
+export function normalizeYesNo(val) {
+  return val === "да" ? "да" : val === "нет" ? "нет" : "";
+}
+
 export function formatDate(ts) {
   const d = ts?.toDate?.();
   return d ? d.toLocaleString("ru-RU") : "";

@@ -21,11 +21,11 @@ import {
   fittingsSubtypesByGroup,
   fittingsFieldsBySubtype,
   fittingsExtrasByValue,
-  colorOptions,
   selectFirst,
   initialForm,
   categoryLabel,
   formatPrice,
+  normalizeYesNo,
 } from "../../lib/catalogSchema";
 
 const products = ref([]);
@@ -40,14 +40,6 @@ const newEditFiles = ref([]);
 const newEditPreviews = ref([]);
 
 const savingEdit = ref(false);
-
-const fittingsHiddenKeysInView = [
-  "color",
-  "material",
-  "style",
-  "fittingGroup",
-  "fittingSubtype",
-];
 
 const filteredProducts = computed(() => {
   const term = (searchTerm.value || "").toLowerCase().trim();
@@ -209,14 +201,8 @@ async function saveEdit(id) {
       : [];
     const allImgs = [...editImages.value, ...uploaded];
 
-    const normalizedIsHit =
-      editForm.isHit === "да" ? "да" : editForm.isHit === "нет" ? "нет" : "";
-    const normalizedIsExhibit =
-      editForm.isExhibit === "да"
-        ? "да"
-        : editForm.isExhibit === "нет"
-        ? "нет"
-        : "";
+    const normalizedIsHit = normalizeYesNo(editForm.isHit);
+    const normalizedIsExhibit = normalizeYesNo(editForm.isExhibit);
 
     await updateDoc(doc(db, "products", id), {
       ...editForm,

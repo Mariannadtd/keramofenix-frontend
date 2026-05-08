@@ -13,11 +13,9 @@ import {
   fittingsSubtypesByGroup,
   fittingsFieldsBySubtype,
   fittingsExtrasByValue,
-  colorOptions,
   selectFirst,
   initialForm,
-  categoryLabel,
-  formatPrice,
+  normalizeYesNo,
 } from "../../lib/catalogSchema";
 
 const emit = defineEmits(["created"]);
@@ -207,18 +205,8 @@ async function addProduct() {
     previews.value = [];
     files.value = [];
 
-    const normalizedIsHit =
-      form.value.isHit === "да"
-        ? "да"
-        : form.value.isHit === "нет"
-        ? "нет"
-        : "";
-    const normalizedIsExhibit =
-      form.value.isExhibit === "да"
-        ? "да"
-        : form.value.isExhibit === "нет"
-        ? "нет"
-        : "";
+    const normalizedIsHit = normalizeYesNo(form.value.isHit);
+    const normalizedIsExhibit = normalizeYesNo(form.value.isExhibit);
 
     const payload = {
       ...form.value,

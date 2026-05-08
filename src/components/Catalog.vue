@@ -1,11 +1,13 @@
 <script setup>
 import Card from "./Card.vue";
+import SkeletonCard from "./UI/Preloader.vue";
 
 const props = defineProps({
   title: { type: String, required: true },
   products: { type: Array, default: () => [] },
   titleMargin: { type: String, default: "8rem auto 4rem" },
   loading: { type: Boolean, default: false },
+  skeletonCount: { type: Number, default: 6 },
 });
 </script>
 
@@ -17,7 +19,13 @@ const props = defineProps({
       <slot name="search" />
     </div>
 
-    <TransitionGroup name="cards" tag="div" class="cards">
+    <div v-if="loading" class="cards">
+      <slot name="loading">
+        <SkeletonCard v-for="n in skeletonCount" :key="n" />
+      </slot>
+    </div>
+
+    <TransitionGroup v-else name="cards" tag="div" class="cards">
       <Card
         v-for="product in products"
         :key="product.id"

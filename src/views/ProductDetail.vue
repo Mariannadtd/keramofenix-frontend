@@ -80,6 +80,25 @@ function prev() {
         <div class="gallery">
           <div v-if="images.length" class="main-frame" @click="open(0)">
             <img :src="images[0]" class="main-img" alt="" />
+            <div class="pd-badges">
+              <Badge
+                v-if="isInCart"
+                variant="incart"
+                title="Товар уже в корзине"
+              >
+                В корзине
+              </Badge>
+              <Badge v-if="isHitMark" variant="hit" title="Хит продаж">
+                Хит
+              </Badge>
+              <Badge
+                v-if="isExhibitMark"
+                variant="exhibit"
+                title="Есть выставочный образец в салоне"
+              >
+                Есть в салоне
+              </Badge>
+            </div>
           </div>
           <div class="thumbs">
             <img
@@ -94,20 +113,6 @@ function prev() {
         </div>
 
         <div class="info">
-          <div class="pd-badges">
-            <Badge v-if="isInCart" variant="incart" title="Товар уже в корзине"
-              >В корзине</Badge
-            >
-            <Badge v-if="isHitMark" variant="hit" title="Хит продаж">Хит</Badge>
-            <Badge
-              v-if="isExhibitMark"
-              variant="exhibit"
-              title="Есть выставочный образец в салоне"
-            >
-              Есть в салоне
-            </Badge>
-          </div>
-
           <h1 class="title">{{ product.name }}</h1>
           <p class="cat">Категория: {{ product.category }}</p>
           <ProductAttributes :product="product" />
@@ -182,13 +187,21 @@ function prev() {
   &__wrapper
     display: flex
     justify-content: center
+    align-items: flex-start
     gap: 3rem
+    width: 100%
+    padding: 2rem
+    box-sizing: border-box
+    background: #fff
+    border-radius: .5rem
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .10)
 
     @media (max-width: $small)
       display: flex
       flex-direction: column
       align-items: center
       gap: 1rem
+      padding: 1rem
 
     > .gallery,
     > .info
@@ -408,14 +421,18 @@ function prev() {
     width: auto
 
 .pd-badges
+  position: absolute
+  top: .75rem
+  right: .75rem
+  z-index: 2
   display: flex
   flex-direction: column
   gap: .35rem
   align-items: flex-end
-  margin-top: .75rem
-  margin-right: calc(-1 * var(--badge-overhang, 1.2rem))
+  pointer-events: none
 
 @media (max-width: $small)
   .pd-badges
-    margin-right: calc(-1 * var(--badge-overhang, .4rem))
+    top: .5rem
+    right: .5rem
 </style>

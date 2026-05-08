@@ -1,79 +1,23 @@
 <script setup>
-import { ref, onMounted, computed, onBeforeUnmount, watch } from "vue";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  limit,
-  startAfter,
-} from "firebase/firestore";
-import { db } from "../firebase";
-
+import { computed } from "vue";
 import Catalog from "../components/Catalog.vue";
 import Search from "../components/Search.vue";
 import Filter from "../components/UI/Filter.vue";
 import Button from "../components/UI/Button.vue";
 import SkeletonCard from "../components/UI/Preloader.vue";
-
-const colorOptions = [
-  "хром",
-  "никель",
-  "матовый никель",
-  "бронза",
-  "латунь",
-  "черный",
-  "белый",
-  "золото",
-  "медь",
-];
-
-const fittingsGroups = [
-  { value: "accessories", label: "Аксессуары для дверей" },
-  { value: "locks", label: "Дверные замки и защелки" },
-  { value: "hinges", label: "Дверные петли" },
-  { value: "handles", label: "Дверные ручки" },
-];
-const fittingsGroupOptions = fittingsGroups.map((g) => g.label);
-
-const fittingsSubtypesByGroup = {
-  accessories: [
-    "автопороги дверные",
-    "доводчики",
-    "ограничители",
-    "фурнитура для дверей купе",
-  ],
-  locks: ["дверные замки", "задвижки", "защелки", "цилиндры"],
-  hinges: [
-    "петли накладные (бабочки)",
-    "петли разъемные",
-    "петли универсальные",
-  ],
-  handles: [
-    "ручки на розетке",
-    "ручки купе",
-    "ручки с механизмом",
-    "ручки стандарт",
-  ],
-};
-
-const products = ref([]);
-const searchQuery = ref("");
-const loading = ref(true);
-
-const loadingMore = ref(false);
-const hasMore = ref(true);
-const lastDoc = ref(null);
-
-const PAGE = 40;
-
-const bottomEl = ref(null);
-let io = null;
-
-const controlsKey = ref(0);
-const filterKey = ref(0);
-const searchKey = ref(0);
+import { useCatalogPage } from "../composables/useCatalogPage";
+import {
+  applySearch,
+  applySingleValueFilters,
+  sortByPrice,
+  sortFilter,
+} from "../lib/catalogFilters";
+import {
+  colorOptions,
+  fittingsGroups,
+  fittingsGroupOptions,
+  fittingsSubtypesByGroup,
+} from "../lib/catalogSchema";
 
 const initialFilterState = () => ({
   sort: "",
@@ -103,87 +47,6 @@ const initialFilterState = () => ({
   closingSpeed: "",
   length: "",
 });
-const filterState = ref(initialFilterState());
-
-const norm = (v) =>
-  (v ?? "")
-    .toString()
-    .toLowerCase()
-    .normalize("NFKC")
-    .replace(/\u00A0/g, " ")
-    .replace(/\s+/g, " ")
-    .replace(/ё/g, "е")
-    .trim();
-
-async function loadMore() {
-  if (loadingMore.value || !hasMore.value) return;
-  loadingMore.value = true;
-
-  try {
-    const base = [
-      where("category", "==", "fittings"),
-      orderBy("createdAt", "desc"),
-      limit(PAGE),
-    ];
-
-    const q = lastDoc.value
-      ? query(
-          collection(db, "products"),
-          ...base.slice(0, 2),
-          startAfter(lastDoc.value),
-          base[2]
-        )
-      : query(collection(db, "products"), ...base);
-
-    const snap = await getDocs(q);
-
-    const batch = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    products.value.push(...batch);
-
-    if (snap.docs.length) lastDoc.value = snap.docs[snap.docs.length - 1];
-    if (snap.docs.length < PAGE) hasMore.value = false;
-  } catch (e) {
-    console.error("fittings loadMore error:", e);
-    hasMore.value = false;
-  } finally {
-    loadingMore.value = false;
-  }
-}
-
-onMounted(async () => {
-  const started = Date.now();
-
-  await loadMore();
-
-  const MIN_SKELETON_MS = 500;
-  const remain = Math.max(0, MIN_SKELETON_MS - (Date.now() - started));
-  setTimeout(() => (loading.value = false), remain);
-
-  io = new IntersectionObserver(
-    ([entry]) => {
-      if (entry.isIntersecting) loadMore();
-    },
-    { rootMargin: "900px" }
-  );
-
-  if (bottomEl.value) io.observe(bottomEl.value);
-});
-
-onBeforeUnmount(() => {
-  if (io) io.disconnect();
-  if (resetTimerId) clearTimeout(resetTimerId);
-});
-
-const sortFilter = {
-  key: "sort",
-  type: "sort",
-  label: "Сортировка по цене",
-  options: [
-    { label: "Сортировка по цене", value: "" },
-    { label: "По цене ↑", value: "asc" },
-    { label: "По цене ↓", value: "desc" },
-  ],
-};
 
 const baseFilters = [
   {
@@ -199,6 +62,40 @@ const baseFilters = [
     options: colorOptions,
   },
 ];
+
+const simpleFilterKeys = ["fittingGroup", "fittingSubtype", "color"];
+
+const {
+  products,
+  searchQuery,
+  loading,
+  loadingMore,
+  hasMore,
+  bottomEl,
+  controlsKey,
+  filterKey,
+  searchKey,
+  filterState,
+  processed,
+  showNoResults,
+  resetFilters,
+} = useCatalogPage({
+  category: "fittings",
+  pageSize: 40,
+  minLoadingMs: 500,
+  defaultFilters: initialFilterState,
+  includeSearchInEmptyState: false,
+  onLoadError: (error) => console.error("fittings loadMore error:", error),
+  processProducts: ({ products, searchQuery, filters }) => {
+    const searched = applySearch(products, searchQuery);
+    const filtered = applySingleValueFilters(
+      searched,
+      filters,
+      simpleFilterKeys
+    );
+    return sortByPrice(filtered, filters.sort);
+  },
+});
 
 const subtypeOptions = computed(() => {
   const groupLabel = filterState.value.fittingGroup;
@@ -218,66 +115,13 @@ const filtersConfig = computed(() => {
   }
   return conf;
 });
-
-const processed = computed(() => {
-  let arr = products.value;
-
-  const q = norm(searchQuery.value);
-  if (q) arr = arr.filter((p) => norm(p.name).includes(q));
-
-  const st = filterState.value;
-  const simpleKeys = ["fittingGroup", "fittingSubtype", "color"];
-  for (const key of simpleKeys) {
-    const val = norm(st[key]);
-    if (val) arr = arr.filter((p) => norm(p[key]) === val);
-  }
-
-  if (st.sort === "asc") arr = [...arr].sort((a, b) => a.price - b.price);
-  else if (st.sort === "desc") arr = [...arr].sort((a, b) => b.price - a.price);
-
-  return arr;
-});
-
-const resetFilters = () => {
-  searchQuery.value = "";
-  filterState.value = initialFilterState();
-  controlsKey.value++;
-  filterKey.value++;
-  searchKey.value++;
-};
-
-const showNoResults = ref(false);
-let resetTimerId = null;
-
-watch(
-  () => ({ len: processed.value.length, filters: { ...filterState.value } }),
-  ({ len, filters }) => {
-    const hasAny = Object.entries(filters).some(([k, v]) =>
-      k === "sort" ? !!norm(v) : Array.isArray(v) ? v.length > 0 : !!norm(v)
-    );
-    showNoResults.value = len === 0 && hasAny;
-
-    if (showNoResults.value && !resetTimerId) {
-      resetTimerId = setTimeout(() => {
-        resetFilters();
-        showNoResults.value = false;
-        resetTimerId = null;
-      }, 5000);
-    }
-
-    if (!showNoResults.value && resetTimerId) {
-      clearTimeout(resetTimerId);
-      resetTimerId = null;
-    }
-  },
-  { immediate: true, deep: true }
-);
 </script>
 
 <template>
   <Catalog
     title="Фурнитура"
     :products="loading ? [] : processed"
+    :loading="loading"
     title-margin="4rem auto 2rem"
   >
     <template #search>
@@ -297,11 +141,11 @@ watch(
         </div>
       </div>
     </template>
-  </Catalog>
 
-  <div v-if="loading" class="skeleton-grid">
-    <SkeletonCard v-for="n in 6" :key="n" />
-  </div>
+    <template #loading>
+      <SkeletonCard v-for="n in 6" :key="n" />
+    </template>
+  </Catalog>
 
   <div ref="bottomEl" style="height: 1px"></div>
 
@@ -320,50 +164,9 @@ watch(
 
 <style scoped lang="sass">
 @import "../assets/css/main.sass"
-
-.catalog-controls
-  display: flex
-  flex-direction: column
-  align-items: center
-  gap: .75rem
-  margin-bottom: 2rem
-
-.search-wrap
-  width: 100%
-  max-width: 520px
-
-.search-wrap :deep(input)
-  width: 100%
-
-.filters-row
-  width: 100%
-  display: grid
-  grid-auto-rows: min-content
-  grid-template-columns: repeat(auto-fit, minmax(160px, max-content))
-  justify-content: center
-  align-items: start
-  gap: .5rem
-
-.skeleton-grid
-  display: grid
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
-  gap: 1rem
-
-.no-results
-  text-align: center
-  margin: 1rem auto 2rem
-  font-size: 1.05rem
-  font-weight: 500
-  color: #b00
-
-.btn-reset
-  padding-top: 0.55rem
-  padding-bottom: 0.55rem
+@import "../assets/css/catalog-page.sass"
 
 @media (max-width: $large)
-  .search-wrap
-    max-width: 100%
-
   .filters-row
     grid-template-columns: 1fr
     justify-items: center
@@ -373,13 +176,6 @@ watch(
     justify-self: center
     padding-top: 0.65rem
     padding-bottom: 0.65rem
-
-.search-wrap
-  width: 100%
-  max-width: 520px
-
-.search-wrap :deep(input)
-  width: 100%
 
 @media (max-width: 1200px)
   .filters-row

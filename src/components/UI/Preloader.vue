@@ -11,12 +11,14 @@
     <div class="title">
       <div class="line skeleton"></div>
       <div class="line skeleton short"></div>
+      <div class="line skeleton"></div>
+      <div class="line skeleton shorter"></div>
     </div>
 
     <div class="footer">
       <div class="price">
-        <div class="line skeleton"></div>
-        <div class="line skeleton short"></div>
+        <div class="price-label skeleton"></div>
+        <div class="price-value skeleton"></div>
       </div>
       <div class="btn skeleton"></div>
     </div>
@@ -37,51 +39,53 @@
   border: 1px solid rgba(0,0,0,.1)
   box-shadow: 0 4px 12px rgba(0,0,0,.15)
   box-sizing: border-box
-  overflow: hidden
+  overflow: visible
   min-height: 100%
 
   @media (max-width: 576px)
     padding: 1rem
-    border-radius: .6rem
 
 .card__badges
   position: absolute
   top: .75rem
-  right: .75rem
+  right: calc(-1 * var(--badge-overhang, 1.2rem))
   display: flex
   flex-direction: column
   gap: .35rem
+  align-items: flex-end
   z-index: 2
 
 .thumb
   width: 100%
   height: 22rem
   border-radius: .5rem
-  margin-bottom: 1rem
 
   @media (max-width: 576px)
     border-radius: .5rem
 
 .title
-  margin-bottom: 1rem
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: .45rem
+  width: 100%
+  min-height: calc(1.2 * 1.7rem * 4)
+  margin: 1rem 0 0
 
 .footer
   margin-top: auto
   display: flex
+  flex-direction: column
   align-items: center
-  justify-content: space-between
-  gap: .75rem
-
-  @media (max-width: 576px)
-    flex-direction: column
-    align-items: stretch
-    gap: .5rem
+  gap: .5rem
+  width: 100%
 
 .price
   display: flex
-  flex-direction: column
-  gap: .4rem
-  flex: 1 1 auto
+  align-items: baseline
+  justify-content: center
+  gap: .5rem
+  width: 100%
 
 .skeleton
   position: relative
@@ -92,21 +96,35 @@
   animation: shimmer 1.5s linear infinite
 
 .line
-  height: .8rem
+  height: 1.3rem
   border-radius: .35rem
-  width: 100%
+  width: 82%
 
 .line.short
-  width: 60%
+  width: 72%
+
+.line.shorter
+  width: 58%
+
+.price-label
+  width: 4rem
+  height: 1.2rem
+  border-radius: .35rem
+
+.price-value
+  width: 7rem
+  height: 1.7rem
+  border-radius: .35rem
 
 .btn
   flex: 0 0 auto
-  height: 2.7rem
-  width: 8rem
+  height: 3.1rem
+  width: 11rem
   border-radius: .5rem
 
-  @media (max-width: 576px)
-    width: 100%
+@media (max-width: 576px)
+  .card__badges
+    right: calc(-1 * var(--badge-overhang, .4rem))
 
 @keyframes shimmer
   0%
