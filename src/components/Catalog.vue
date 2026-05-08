@@ -5,7 +5,7 @@ const props = defineProps({
   title: { type: String, required: true },
   products: { type: Array, default: () => [] },
   titleMargin: { type: String, default: "8rem auto 4rem" },
-  loading: { type: Boolean, default: false }, // можно пока не трогать
+  loading: { type: Boolean, default: false },
 });
 </script>
 

@@ -105,7 +105,7 @@ export const categoryFields = {
       key: "form",
       label: "Вид",
       type: "select",
-      options: ["ламинат", "кварц винил"],
+      options: ["ламинат", "кварцвинил"],
     },
     {
       key: "class",
@@ -155,7 +155,7 @@ export const categoryFields = {
       key: "format",
       label: "Формат",
       type: "select",
-      options: ["Плитка ", "доска", "ёлочка"],
+      options: ["Плитка ", "палуба", "ёлочка"],
     },
     {
       key: "surface",
@@ -184,29 +184,35 @@ export const categoryFields = {
   ],
 };
 
+const laminateFloorFields = [
+  {
+    key: "type",
+    label: "Тип планки",
+    type: "select",
+    options: ["1-полосный", "2-полосный", "3-полосный", "Мультиполосный"],
+  },
+  { key: "cover", label: "Покрытие", type: "text" },
+];
+
+const quartzVinylFloorFields = [
+  {
+    key: "structure",
+    label: "Тип кварцвинила",
+    type: "select",
+    options: [
+      "LVT(кварцвинил)",
+      "SPC(Каменно-полимерная плитка)",
+      "WPC(древесно-полимерная плитка)",
+    ],
+  },
+  { key: "cover", label: "Покрытие", type: "text" },
+];
+
 export const floorFormFields = {
-  ламинат: [
-    {
-      key: "type",
-      label: "Тип планки",
-      type: "select",
-      options: ["1-полосный", "2-полосный", "3-полосный", "Мультиполосный"],
-    },
-    { key: "cover", label: "Покрытие", type: "text" },
-  ],
-  "кварц винил": [
-    {
-      key: "structure",
-      label: "Тип кварц-винила",
-      type: "select",
-      options: [
-        "LVT(кварц винил)",
-        "SPC(Каменно-полимерная плитка)",
-        "WPC(древесно-полимерная плитка)",
-      ],
-    },
-    { key: "cover", label: "Покрытие", type: "text" },
-  ],
+  ламинат: laminateFloorFields,
+  кварцвинил: quartzVinylFloorFields,
+  "кварц винил": quartzVinylFloorFields,
+  "кварц-винил": quartzVinylFloorFields,
 };
 
 export const fittingsFieldsBySubtype = {

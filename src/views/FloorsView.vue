@@ -48,7 +48,6 @@ const defaultFilters = () => ({
 });
 
 const filterState = ref(defaultFilters());
-
 const norm = (v) =>
   (v ?? "")
     .toString()
@@ -56,8 +55,12 @@ const norm = (v) =>
     .normalize("NFKC")
     .replace(/\u00A0/g, " ")
     .replace(/\s+/g, " ")
+    .replace(/кварц[\s-]*винил/g, "кварцвинил")
     .replace(/ё/g, "е")
     .trim();
+
+const isLaminate = (v) => norm(v) === "ламинат";
+const isQuartzVinyl = (v) => norm(v) === "кварцвинил";
 
 async function loadMore() {
   if (loadingMore.value || !hasMore.value) return;
@@ -75,7 +78,7 @@ async function loadMore() {
           collection(db, "products"),
           ...base.slice(0, 2),
           startAfter(lastDoc.value),
-          base[2]
+          base[2],
         )
       : query(collection(db, "products"), ...base);
 
@@ -102,7 +105,7 @@ onMounted(async () => {
     ([entry]) => {
       if (entry.isIntersecting) loadMore();
     },
-    { rootMargin: "900px" }
+    { rootMargin: "900px" },
   );
 
   if (bottomEl.value) io.observe(bottomEl.value);
@@ -124,7 +127,7 @@ const baseFilters = [
     key: "form",
     label: "Вид",
     type: "select",
-    options: ["ламинат", "кварц винил"],
+    options: ["ламинат", "кварцвинил"],
   },
   {
     key: "moistureresistance",
@@ -148,7 +151,7 @@ const baseFilters = [
     key: "format",
     label: "Формат",
     type: "select",
-    options: ["Плитка ", "доска", "ёлочка"],
+    options: ["Плитка ", "палуба", "ёлочка"],
   },
   {
     key: "surface",
@@ -176,10 +179,10 @@ const lamFilters = [
 const quartzFilters = [
   {
     key: "structure",
-    label: "Тип кварц-винила",
+    label: "Тип кварцвинила",
     type: "select",
     options: [
-      "LVT(кварц винил)",
+      "LVT(кварцвинил)",
       "SPC(Каменно-полимерная плитка)",
       "WPC(древесно-полимерная плитка)",
     ],
@@ -193,9 +196,9 @@ const quartzFilters = [
 ];
 
 const filtersConfig = computed(() => {
-  const f = norm(filterState.value.form);
-  if (f === "ламинат") return [sortFilter, ...baseFilters, ...lamFilters];
-  if (f === "кварц винил")
+  if (isLaminate(filterState.value.form))
+    return [sortFilter, ...baseFilters, ...lamFilters];
+  if (isQuartzVinyl(filterState.value.form))
     return [sortFilter, ...baseFilters, ...quartzFilters];
   return [sortFilter, ...baseFilters];
 });
@@ -207,17 +210,18 @@ const processed = computed(() => {
   if (q) arr = arr.filter((p) => norm(p.name).includes(q));
 
   const st = filterState.value;
-  const simple = [
+  const activeSimple = [
     "form",
-    "structure",
-    "class",
-    "type",
     "moistureresistance",
     "substrate",
     "installation",
     "format",
   ];
-  for (const k of simple) {
+
+  if (isLaminate(st.form)) activeSimple.push("class", "type");
+  if (isQuartzVinyl(st.form)) activeSimple.push("class", "structure");
+
+  for (const k of activeSimple) {
     const v = norm(st[k]);
     if (v) arr = arr.filter((p) => norm(p[k]) === v);
   }
@@ -249,7 +253,7 @@ watch(
     const hasAnyFilter =
       !!norm(q) ||
       Object.entries(filters).some(([k, v]) =>
-        Array.isArray(v) ? v.length > 0 : !!norm(v)
+        Array.isArray(v) ? v.length > 0 : !!norm(v),
       );
     showNoResults.value = len === 0 && hasAnyFilter;
 
@@ -266,7 +270,7 @@ watch(
       resetTimerId = null;
     }
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 );
 
 onBeforeUnmount(() => {
