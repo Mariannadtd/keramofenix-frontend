@@ -1,4 +1,4 @@
-# 🚪 Дверной Ренессанс — e-commerce фронтенд на Vue 3 + Firebase
+# 🚪 КерамоФеникс — e-commerce фронтенд на Vue 3 + Firebase
 
 **Дверной Ренессанс** — полноценный e-commerce фронтенд для продаж межкомнатных и входных дверей, напольных покрытий и фурнитуры.  
 Проект построен на **Vue 3**, **Pinia**, **Firebase** и **Cloudflare Workers**, включает кастомную корзину, динамический подбор размеров дверей и погонажа, админ-панель и интеграцию с Telegram.
@@ -6,10 +6,10 @@
 ---
 
 ### 🔗 Демо  
-https://dveri-renessans.ru
+https://keramofenix.ru
 
 ### 💻 Репозиторий  
-https://github.com/Mariannadtd/door-renaissance-frontend
+https://github.com/Mariannadtd/keramofenix-frontend
 
 ---
 
