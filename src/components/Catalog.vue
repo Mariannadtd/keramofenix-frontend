@@ -4,6 +4,7 @@ import SkeletonCard from "./UI/Preloader.vue";
 
 const props = defineProps({
   title: { type: String, required: true },
+  titleTag: { type: String, default: "h1" },
   products: { type: Array, default: () => [] },
   titleMargin: { type: String, default: "8rem auto 4rem" },
   loading: { type: Boolean, default: false },
@@ -13,7 +14,7 @@ const props = defineProps({
 
 <template>
   <div class="catalog-root">
-    <h1>{{ title }}</h1>
+    <component :is="titleTag" class="heading-1">{{ title }}</component>
 
     <div v-auto-animate class="search-wrapper">
       <slot name="search" />

@@ -29,7 +29,7 @@ const advantages = [
 
 <template>
   <section class="advantages">
-    <h1>Выбирая нас вы получаете:</h1>
+    <h2 class="heading-1">Выбирая нас вы получаете:</h2>
     <ul>
       <li v-for="ad in advantages" :key="ad.title">
         <img :src="ad.src" alt="" />
@@ -42,7 +42,7 @@ const advantages = [
 <style lang="sass" scoped>
 @import "../assets/css/main.sass"
 
-h1
+.heading-1
   display: flex
   justify-content: center
 .advantages

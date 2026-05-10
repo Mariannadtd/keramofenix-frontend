@@ -7,6 +7,17 @@ import { useCartStore } from "../stores/cart";
 import Button from "../components/UI/Button.vue";
 import ProductAttributes from "../components/ProductAttributes.vue";
 import Badge from "../components/UI/Badge.vue";
+import {
+  SITE_NAME,
+  SITE_PHONE,
+  SITE_URL,
+  formatPriceForSeo,
+  setCanonical,
+  setJsonLd,
+  setMeta,
+  setProperty,
+  toAbsoluteUrl,
+} from "../lib/seo";
 
 const route = useRoute();
 const router = useRouter();
@@ -22,6 +33,7 @@ onMounted(async () => {
     const snap = await getDoc(doc(db, "products", id));
     if (!snap.exists()) throw new Error("Товар не найден");
     product.value = { id: snap.id, ...snap.data() };
+    updateProductSeo();
   } catch (e) {
     error.value = e.message;
   } finally {
@@ -42,6 +54,108 @@ const isExhibitMark = computed(
     product.value &&
     (product.value.isExhibit === "да" || product.value.isExhibit === true)
 );
+
+const categoryMeta = {
+  interiors: { name: "Межкомнатные двери", path: "/interiors" },
+  exteriors: { name: "Входные двери", path: "/exteriors" },
+  floors: { name: "Напольные покрытия", path: "/floors" },
+  fittings: { name: "Фурнитура", path: "/fittings" },
+};
+
+function productCanonical() {
+  return `${SITE_URL}${route.fullPath}`;
+}
+
+function productName() {
+  return String(product.value?.name || "").trim();
+}
+
+function productDescription() {
+  if (!product.value) return "";
+  const category =
+    categoryMeta[product.value.category]?.name || "товары для ремонта";
+  const price = formatPriceForSeo(product.value.price);
+  return `${productName()} — ${category.toLowerCase()} в Сочи${
+    price ? `, цена ${price}` : ""
+  }. ${SITE_NAME}: ул. Гагарина 63, ул. Донская 3/3. Телефон ${SITE_PHONE}.`;
+}
+
+function updateProductSeo() {
+  if (!product.value) return;
+
+  const name = productName();
+  const title = `${name} — ${SITE_NAME}`;
+  const description = productDescription();
+  const canonical = productCanonical();
+  const image = images.value[0] ? toAbsoluteUrl(images.value[0]) : "";
+  const category =
+    categoryMeta[product.value.category] || categoryMeta.interiors;
+
+  document.title = title;
+  setMeta("description", description);
+  setCanonical(canonical);
+  setProperty("og:type", "product");
+  setProperty("og:title", title);
+  setProperty("og:description", description);
+  setProperty("og:url", canonical);
+  if (image) setProperty("og:image", image);
+
+  setJsonLd("product-jsonld", {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        "@id": `${canonical}#product`,
+        name,
+        image: images.value.map(toAbsoluteUrl),
+        description: product.value.description || description,
+        sku: product.value.id,
+        category: category.name,
+        brand: {
+          "@type": "Brand",
+          name: SITE_NAME,
+        },
+        offers: {
+          "@type": "Offer",
+          url: canonical,
+          priceCurrency: "RUB",
+          price: String(Number(product.value.price) || ""),
+          availability: "https://schema.org/InStock",
+          itemCondition: "https://schema.org/NewCondition",
+          seller: {
+            "@type": "Store",
+            name: SITE_NAME,
+            telephone: SITE_PHONE,
+          },
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${canonical}#breadcrumbs`,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Главная",
+            item: SITE_URL,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: category.name,
+            item: `${SITE_URL}${category.path}`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name,
+            item: canonical,
+          },
+        ],
+      },
+    ],
+  });
+}
 
 function onAddToCart() {
   cart.addToCart(product.value);
@@ -79,7 +193,7 @@ function prev() {
       <div class="content__wrapper">
         <div class="gallery">
           <div v-if="images.length" class="main-frame" @click="open(0)">
-            <img :src="images[0]" class="main-img" alt="" />
+            <img :src="images[0]" class="main-img" :alt="product.name" />
             <div class="pd-badges">
               <Badge
                 v-if="isInCart"
@@ -107,7 +221,7 @@ function prev() {
               :src="src"
               class="thumb-img"
               @click="open(i)"
-              alt=""
+              :alt="`${product.name} — фото ${i + 1}`"
             />
           </div>
         </div>
@@ -132,7 +246,7 @@ function prev() {
         <button class="nav prev" @click="prev">
           <img src="../assets/img/nav-arrow.png" alt="" />
         </button>
-        <img :src="images[currentIdx]" class="modal-img" alt="" />
+        <img :src="images[currentIdx]" class="modal-img" :alt="product.name" />
         <button class="nav next" @click="next">
           <img src="../assets/img/nav-arrow.png" alt="" />
         </button>

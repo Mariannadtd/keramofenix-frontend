@@ -9,7 +9,10 @@ export const normalizeText = (value) =>
     .trim();
 
 export const normalizeFloorText = (value) =>
-  normalizeText(value).replace(/кварц[\s-]*винил/g, "кварцвинил");
+  normalizeText(value)
+    .replace(/кварц[\s-]*винил/g, "кварцвинил")
+    .replace(/керамический\s+гранит/g, "керамогранит")
+    .replace(/керамо[\s-]*гранит/g, "керамогранит");
 
 export const sortFilter = {
   key: "sort",

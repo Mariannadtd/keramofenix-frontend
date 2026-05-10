@@ -23,6 +23,7 @@ export function useCatalogPage({
   minLoadingMs = 0,
   normalize = normalizeText,
   includeSearchInEmptyState = true,
+  autoResetEmptyState = true,
   onLoadError,
 }) {
   const products = ref([]);
@@ -142,7 +143,7 @@ export function useCatalogPage({
 
       showNoResults.value = len === 0 && hasAny;
 
-      if (showNoResults.value && !resetTimerId) {
+      if (showNoResults.value && autoResetEmptyState && !resetTimerId) {
         resetTimerId = setTimeout(() => {
           resetFilters();
           showNoResults.value = false;

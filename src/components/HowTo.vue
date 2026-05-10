@@ -1,5 +1,5 @@
 <template>
-  <h1>Как подобрать погонаж?</h1>
+  <h2 class="heading-1">Как подобрать погонаж?</h2>
   <p>
     <span class="upper">Погонаж</span> — это всё “окружение” двери: коробка,
     доборы, наличники, планки и т.п.
@@ -32,7 +32,7 @@
 </template>
 
 <style scoped lang="sass">
-h1
+.heading-1
   display: flex
   justify-content: space-between
 p

@@ -182,6 +182,8 @@ function close() {
   position: absolute
   inset: 0
   background: rgba(0, 0, 0, 0.5)
+  backdrop-filter: blur(6px)
+  -webkit-backdrop-filter: blur(6px)
 .modal-content
   position: relative
   background: white

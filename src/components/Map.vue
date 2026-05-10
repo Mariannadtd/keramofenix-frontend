@@ -1,6 +1,6 @@
 <template>
   <section class="contacts">
-    <h1>Как нас найти?</h1>
+    <h2 class="heading-1">Как нас найти?</h2>
     <div class="text">
       <p>
         У нас 2 салона, мы находимся по адресу:
@@ -26,14 +26,9 @@
 </template>
 
 <style scoped lang="sass">
-h1
+.heading-1
   display: flex
   justify-content: center
-
-.contacts
-  h2
-    font-size: 1.8rem
-    margin-bottom: 1rem
 
 .map-wrapper
   position: relative

@@ -1,10 +1,21 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { auth } from "../firebase";
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  removeJsonLd,
+  removeMeta,
+  setCanonical,
+  setMeta,
+  setProperty,
+} from "../lib/seo";
 
 const HomeView = () => import("../views/HomeView.vue");
 const InteriorDoors = () => import("../views/InteriorDoors.vue");
 const ExteriorDoors = () => import("../views/ExteriorDoors.vue");
 const FloorsView = () => import("../views/FloorsView.vue");
+const PorcelainStoneware = () => import("../views/PorcelainStoneware.vue");
 const FittingsView = () => import("../views/FittingsView.vue");
 const ProductDetail = () => import("../views/ProductDetail.vue");
 const CartView = () => import("../views/Cart.vue");
@@ -27,28 +38,7 @@ async function isAdminUser(user) {
   return t?.claims?.admin === true;
 }
 
-function setMeta(name, content) {
-  let tag = document.querySelector(`meta[name="${name}"]`);
-  if (!tag) {
-    tag = document.createElement("meta");
-    tag.setAttribute("name", name);
-    document.head.appendChild(tag);
-  }
-  tag.setAttribute("content", content);
-}
-
-function setCanonical(url) {
-  let tag = document.querySelector('link[rel="canonical"]');
-  if (!tag) {
-    tag = document.createElement("link");
-    tag.setAttribute("rel", "canonical");
-    document.head.appendChild(tag);
-  }
-  tag.setAttribute("href", url);
-}
-
-const defaultDescription =
-  "КерамоФеникс — двери, напольные покрытия и фурнитура в Сочи. Адреса: ул. Гагарина 63, ул. Донская 3/3. Ежедневно с 9:00 до 21:00. Телефон: +7 988 406-88-87.";
+const defaultDescription = SITE_DESCRIPTION;
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -98,6 +88,17 @@ const router = createRouter({
       },
     },
     {
+      path: "/porcelain-stoneware",
+      name: "porcelain-stoneware",
+      component: PorcelainStoneware,
+      meta: {
+        title: "Керамогранит — КерамоФеникс",
+        description:
+          "Керамогранит в Сочи от КерамоФеникс. Подберите плитку по формату, поверхности и цене. Адреса: ул. Гагарина 63, ул. Донская 3/3. Телефон: +7 988 406-88-87.",
+        canonical: "https://keramofenix.ru/porcelain-stoneware",
+      },
+    },
+    {
       path: "/fittings",
       name: "fittings",
       component: FittingsView,
@@ -128,6 +129,7 @@ const router = createRouter({
         description:
           "Корзина интернет-магазина КерамоФеникс. Адреса магазинов: Сочи, ул. Гагарина 63, ул. Донская 3/3. Телефон: +7 988 406-88-87.",
         canonical: "https://keramofenix.ru/cart",
+        robots: "noindex, nofollow",
       },
     },
     {
@@ -161,6 +163,7 @@ const router = createRouter({
         title: "Вход — КерамоФеникс",
         description: defaultDescription,
         canonical: "https://keramofenix.ru/login",
+        robots: "noindex, nofollow",
       },
     },
     {
@@ -172,6 +175,7 @@ const router = createRouter({
         title: "Админ-панель — КерамоФеникс",
         description: defaultDescription,
         canonical: "https://keramofenix.ru/admin",
+        robots: "noindex, nofollow",
       },
     },
 
@@ -226,16 +230,31 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach((to) => {
-  document.title = to.meta.title || "КерамоФеникс";
+  const title = to.meta.title || SITE_NAME;
+  const description = to.meta.description || defaultDescription;
 
-  setMeta("description", to.meta.description || defaultDescription);
+  document.title = title;
+
+  setMeta("description", description);
+
+  if (to.meta.robots) setMeta("robots", to.meta.robots);
+  else removeMeta("robots");
 
   const canonical =
     to.name === "product-detail"
-      ? `https://keramofenix.ru${to.fullPath}`
-      : to.meta.canonical || `https://keramofenix.ru${to.path}`;
+      ? `${SITE_URL}${to.fullPath}`
+      : to.meta.canonical || `${SITE_URL}${to.path}`;
 
   setCanonical(canonical);
+  setProperty("og:site_name", SITE_NAME);
+  setProperty("og:type", to.name === "product-detail" ? "product" : "website");
+  setProperty("og:title", title);
+  setProperty("og:description", description);
+  setProperty("og:url", canonical);
+
+  if (to.name !== "product-detail") {
+    removeJsonLd("product-jsonld");
+  }
 });
 
 export default router;

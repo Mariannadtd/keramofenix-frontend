@@ -1,42 +1,45 @@
 <script setup>
-import Slider from "../components/UI/Slider.vue";
 import { onMounted, ref, computed } from "vue";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import Button from "../components/UI/Button.vue";
+import Modal from "../components/UI/Modal.vue";
 import Catalog from "../components/Catalog.vue";
 import Advantages from "../components/Advantages.vue";
 import { useRouter } from "vue-router";
 import Map from "../components/Map.vue";
+import Stocks from "../components/Stocks.vue";
+import { normalizeFloorText } from "../lib/catalogFilters";
 
 const router = useRouter();
 const products = ref([]);
 const loading = ref(true);
+const showModal = ref(false);
 
 function goTo(routeName) {
   router.push({ name: routeName }).catch(() => {});
 }
 
-const slides = [
+const categoryLinks = [
   {
-    src: new URL("../assets/img/nonestandard.png", import.meta.url).href,
-    title: "Изготовим нестандартные двери по вашим размерам",
-    desc: "",
+    title: "Межкомнатные двери",
+    routeName: "interiors",
   },
   {
-    src: new URL("../assets/img/firstPhoto1.png", import.meta.url).href,
-    title: "Закажи дверь и пол, не выходя из дома",
-    desc: "",
+    title: "Входные двери",
+    routeName: "exteriors",
   },
   {
-    src: new URL("../assets/img/yamap.png", import.meta.url).href,
-    title: "Приходи к нам в гости. г. Сочи, ул. Гагарина 63 и ул. Донская 3/3",
-    desc: "",
+    title: "Керамогранит",
+    routeName: "porcelain-stoneware",
   },
   {
-    src: new URL("../assets/img/percent.png", import.meta.url).href,
-    title: "Купи в рассрочку без переплат",
-    desc: "",
+    title: "Напольные покрытия",
+    routeName: "floors",
+  },
+  {
+    title: "Фурнитура",
+    routeName: "fittings",
   },
 ];
 
@@ -63,6 +66,9 @@ const exteriors = computed(() =>
 const floors = computed(() =>
   products.value.filter((p) => p.category === "floors"),
 );
+const porcelainStoneware = computed(() =>
+  floors.value.filter((p) => normalizeFloorText(p.form) === "керамогранит"),
+);
 const fittings = computed(() =>
   products.value.filter((p) => p.category === "fittings"),
 );
@@ -85,6 +91,12 @@ const exteriorsRandom = computed(() =>
 const floorsRandom = computed(() =>
   getRandomItems(floors.value, Math.min(6, floors.value.length)),
 );
+const porcelainStonewareRandom = computed(() =>
+  getRandomItems(
+    porcelainStoneware.value,
+    Math.min(6, porcelainStoneware.value.length),
+  ),
+);
 const fittingsRandom = computed(() =>
   getRandomItems(fittings.value, Math.min(6, fittings.value.length)),
 );
@@ -93,23 +105,50 @@ const fittingsRandom = computed(() =>
 <template>
   <h1 class="sr-only">КерамоФеникс — двери, полы и плитка в Сочи</h1>
 
-  <section class="home">
-    <div class="home__slider">
-      <Slider
-        class="home__slider-inner"
-        :slides="slides"
-        :breakpoints="{ 0: 1 }"
-        autoplay
-        :interval="4000"
-      />
+  <section class="home-hero" aria-labelledby="home-hero-title">
+    <div class="home-hero__inner">
+      <nav class="home-hero__menu" aria-label="Основные категории">
+        <button
+          v-for="link in categoryLinks"
+          :key="link.routeName"
+          type="button"
+          :class="[
+            'home-hero__category',
+            { 'home-hero__category--active': link.routeName === 'porcelain-stoneware' },
+          ]"
+          @click="goTo(link.routeName)"
+        >
+          <span>{{ link.title }}</span>
+          <img
+            class="home-hero__category-arrow"
+            src="../assets/img/arrow-right.png"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+      </nav>
+
+      <div class="home-hero__content">
+        <p class="home-hero__eyebrow">2 салона в Сочи • замер • доставка</p>
+        <h2 id="home-hero-title">Двери, пол, керамогранит</h2>
+        <p>
+          Подберем комплект под ваш ремонт и покажем образцы в салоне.
+        </p>
+
+        <div class="home-hero__actions">
+          <Button class="home__button home-hero__button" @click="showModal = true">
+            Получить консультацию
+          </Button>
+        </div>
+      </div>
     </div>
   </section>
 
   <section>
-    <h1 class="sr-only">КерамоФеникс — двери, полы и плитка в Сочи</h1>
     <Catalog
       class="home__catalog"
       title="Межкомнатные двери"
+      title-tag="h2"
       :products="interiorsRandom"
       :loading="loading"
     />
@@ -125,6 +164,7 @@ const fittingsRandom = computed(() =>
     <Catalog
       class="home__catalog"
       title="Входные двери"
+      title-tag="h2"
       :products="exteriorsRandom"
       :loading="loading"
     />
@@ -139,7 +179,24 @@ const fittingsRandom = computed(() =>
 
     <Catalog
       class="home__catalog"
+      title="Керамогранит"
+      title-tag="h2"
+      :products="porcelainStonewareRandom"
+      :loading="loading"
+    />
+    <Button class="home__button" @click="goTo('porcelain-stoneware')">
+      Показать ещё
+      <img
+        class="home__button_img"
+        src="../assets/img/arrow-right.png"
+        alt="arrow-right"
+      />
+    </Button>
+
+    <Catalog
+      class="home__catalog"
       title="Напольные покрытия"
+      title-tag="h2"
       :products="floorsRandom"
       :loading="loading"
     />
@@ -155,6 +212,7 @@ const fittingsRandom = computed(() =>
     <Catalog
       class="home__catalog"
       title="Фурнитура"
+      title-tag="h2"
       :products="fittingsRandom"
       :loading="loading"
     />
@@ -169,7 +227,10 @@ const fittingsRandom = computed(() =>
   </section>
 
   <Advantages />
+  <Stocks />
   <Map />
+
+  <Modal v-if="showModal" @close="showModal = false" />
 </template>
 
 <style scoped lang="sass">
@@ -185,20 +246,127 @@ const fittingsRandom = computed(() =>
   white-space: nowrap
   border: 0
 
-.home__slider
-  position: relative
-  margin-top: 1rem
+.home-hero
+  margin-left: calc(50% - 50vw)
+  margin-right: calc(50% - 50vw)
+
+.home-hero__inner
+  max-width: 1530px
+  margin: 0 auto
+  padding: 3.5rem 3rem
+  display: grid
+  grid-template-columns: minmax(24rem, 34rem) minmax(0, 1fr)
+  gap: 4rem
+  align-items: stretch
+
+  @media (max-width: $large)
+    grid-template-columns: 1fr
+    gap: 2.5rem
+
+  @media (max-width: $medium)
+    padding: 3rem 1.5rem
+
+.home-hero__menu
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  gap: .85rem
+
+.home-hero__category
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: 1rem
+  width: 100%
+  padding: 1.05rem 1.3rem
+  border: 1px solid rgba(227,80,25,.35)
+  border-radius: .5rem
+  background: rgba(255,255,255,.86)
+  color: #000
+  text-align: left
+  cursor: pointer
+  transition: border-color .2s ease, transform .2s ease, color .2s ease, background .2s ease
+
+  &:hover
+    border-color: var(--third-color)
+    color: var(--third-color)
+    transform: translateX(.25rem)
+
+  span
+    font-size: 1.35rem
+    font-weight: 800
+    text-transform: uppercase
+
+.home-hero__category--active
+  background: rgba(255,255,255,.86)
+  backdrop-filter: blur(6px)
+  -webkit-backdrop-filter: blur(6px)
+
+.home-hero__category-arrow
+  flex: none
+  width: 1.65rem
+  height: 1.65rem
+  object-fit: contain
+  filter: invert(41%) sepia(80%) saturate(2065%) hue-rotate(353deg) brightness(95%) contrast(89%)
+  transition: transform .2s ease
+
+.home-hero__category:hover .home-hero__category-arrow
+  transform: translateX(.25rem)
+
+.home-hero__content
+  min-width: 0
+  justify-self: start
+  width: min(100%, 78rem)
+  height: 100%
+  padding: 2.4rem
+  display: flex
+  flex-direction: column
+  justify-content: center
   background: #ffffffcc
+  border: 1px solid rgba(0,0,0,.06)
+  border-radius: .5rem
+  box-shadow: 0 .8rem 2rem rgba(0,0,0,.06)
   backdrop-filter: blur(2px)
   -webkit-backdrop-filter: blur(2px)
-  border-radius: .75rem
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04)
-  max-width: 1530px
 
-.home__slider-inner
-  position: relative
-  z-index: 1
-  width: 100%
+  @media (max-width: $large)
+    order: -1
+
+  @media (max-width: $medium)
+    padding: 2rem
+
+  h2
+    max-width: 74rem
+    margin: 0
+    font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif
+    font-size: 3.4rem
+    line-height: 1.12
+
+    @media (max-width: $small)
+      font-size: 2.8rem
+
+  p
+    max-width: 66rem
+    margin: 1.4rem 0 0
+    font-size: 1.45rem
+    line-height: 1.55
+    color: rgba(0,0,0,.74)
+
+.home-hero__eyebrow
+  margin: 0 0 .9rem !important
+  color: var(--third-color) !important
+  font-weight: 800
+  letter-spacing: 0
+  text-transform: uppercase
+
+.home-hero__actions
+  display: flex
+  flex-wrap: wrap
+  gap: 1rem
+  margin-top: 2rem
+
+.home__button.home-hero__button
+  margin: 0
 
 .home
   &__button
@@ -221,113 +389,8 @@ const fittingsRandom = computed(() =>
 .map
   padding: 4rem 0
 
-:deep(.slider .slide)
-  flex: 0 0 auto
-  position: relative
-  height: 30rem
-  background-size: cover
-  background-repeat: no-repeat
-  background-position: center
-  border-radius: .75rem
-  overflow: hidden
-  :nth-child(2)
-    padding: 10rem 1rem 0 1rem
-
-:deep(.slider .slide__title)
-  display: inline-block
-  color: #000
-  font-size: 4rem
-  font-weight: 700
-  font-family: 'Montserrat', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif
-  color: var(--main-color)
-  line-height: 1.4
-  white-space: pre-line
-
-@media (max-width: $small)
-  :deep(.slider .slide__title)
-    font-size: 2rem !important
-    background-color: white
-    backdrop-filter: blur(50px)
-    -webkit-backdrop-filter: blur(60px)
-    border-radius: .5rem
-    padding-left: .5rem
-    width: 95%
-
-:deep(.slider .slide__caption)
-  position: absolute
-  top: -2rem
-  left: 12rem
-  color: black
-  font-size: 2rem
-  width: 68rem
-  padding: 0.5rem 1rem
-  border-radius: 0.25rem
-  @media (max-width: $xx-large)
-    left: 6rem
-    width: 56rem
-    font-size: 1.8rem
-  @media (max-width: $x-large)
-    left: 2rem
-    width: 45rem
-    font-size: 1.5rem !important
-  @media (max-width: $small)
-    top: 10rem
-    width: 100% !important
-    padding: 1rem
-
-:deep(.slider .slide__img)
-  display: block
-  margin: 0 !important
-  padding: 0 !important
-  vertical-align: top
-  height: 35rem
-  width: auto
-  float: right
-
-:deep(.slider .nav)
-  display: none !important
-
 .skeleton-grid
   display: grid
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
   gap: 1rem
-
-:deep(.slider .slide:last-child)
-  background: var(--main) !important
-  position: relative
-  overflow: hidden
-  border-radius: 1.6rem
-
-:deep(.slider .slide:last-child .slide__img)
-  float: none !important
-  display: block
-  width: 120%
-  height: 100rem
-  object-fit: contain
-  position: absolute
-  right: -40rem
-  top: 50%
-  transform: translateY(-50%)
-
-@media (max-width: $small)
-  :deep(.slider .slide:last-child .slide__img)
-    width: 160%
-    height: auto
-    right: -10rem
-    top: 55%
-
-.promo
-  height: 40rem
-  display: flex
-  align-items: center
-  justify-content: center
-  background: #fff
-  @media (max-width: $small)
-    height: 25rem
-
-  img
-    width: 100%
-    height: 100%
-    object-fit: contain
-    display: block
 </style>

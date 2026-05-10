@@ -374,9 +374,9 @@ async function submitOrder(contactData) {
 
     <HowTo />
 
-    <h1 class="txt">
+    <h2 class="txt heading-1">
       Не разобрались как подобрать погонаж? Оксана и Елена с радостью помогут!
-    </h1>
+    </h2>
     <div class="call">
       <Button @click="openModal">+7 988 406-88-87</Button>
     </div>

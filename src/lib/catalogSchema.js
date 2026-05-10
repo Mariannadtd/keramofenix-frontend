@@ -39,6 +39,8 @@ export const colorOptions = [
   "медь",
 ];
 
+export const floorFormOptions = ["ламинат", "кварцвинил", "керамогранит"];
+
 export const categoryFields = {
   interiors: [
     {
@@ -105,7 +107,7 @@ export const categoryFields = {
       key: "form",
       label: "Вид",
       type: "select",
-      options: ["ламинат", "кварцвинил"],
+      options: floorFormOptions,
     },
     {
       key: "class",
@@ -208,11 +210,15 @@ const quartzVinylFloorFields = [
   { key: "cover", label: "Покрытие", type: "text" },
 ];
 
+const porcelainStonewareFloorFields = [];
+
 export const floorFormFields = {
   ламинат: laminateFloorFields,
   кварцвинил: quartzVinylFloorFields,
   "кварц винил": quartzVinylFloorFields,
   "кварц-винил": quartzVinylFloorFields,
+  керамогранит: porcelainStonewareFloorFields,
+  "керамический гранит": porcelainStonewareFloorFields,
 };
 
 export const fittingsFieldsBySubtype = {

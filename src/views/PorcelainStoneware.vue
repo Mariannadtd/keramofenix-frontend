@@ -3,5 +3,5 @@ import FloorCatalogPage from "../components/FloorCatalogPage.vue";
 </script>
 
 <template>
-  <FloorCatalogPage />
+  <FloorCatalogPage title="Керамогранит" locked-form="керамогранит" />
 </template>

@@ -9,6 +9,7 @@ const links = [
   { name: "Межкомнатные двери", href: "/interiors", class: "first__link" },
   { name: "Входные двери", href: "/exteriors", class: "second__link" },
   { name: "Напольные покрытия", href: "/floors", class: "first__link" },
+  { name: "Керамогранит", href: "/porcelain-stoneware", class: "first__link" },
   { name: "Фурнитура", href: "/fittings", class: "first__link" },
   { name: "О нас", href: "/about", class: "first__link" },
   { name: "Контакты", href: "/contacts", class: "first__link" },
@@ -179,8 +180,11 @@ onBeforeUnmount(() => {
   margin-right: calc(50% - 50vw)
 
   .header__top
-    max-width: 1550px
+    width: 100%
+    max-width: none
     margin: 0 auto
+    padding: 0 3rem
+    box-sizing: border-box
     display: flex
     align-items: center
     justify-content: space-between
@@ -251,20 +255,32 @@ nav.nav-container
   box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.20)
 
   .nav
-    max-width: 1530px !important
+    width: 100%
+    max-width: none !important
     font-family: 'Roboto', sans-serif
     font-weight: 400
     margin: 0 auto
     display: flex
     justify-content: space-between
+    gap: 1rem
+    flex-wrap: wrap
     list-style: none
+    @media (min-width: $xx-large)
+      gap: 1.8rem
 
     li a
-      font-size:      1.5rem
+      display: block
+      font-size:      1.15rem
+      line-height: 1.2
+      text-align: center
       text-transform: uppercase
       font-weight:    bold
       color:          #000
       transition:     color .3s
+      @media (min-width: $xx-large)
+        font-size: 1.3rem
+      @media (min-width: $xxx-large)
+        font-size: 1.5rem
       @media (max-width: $large)
         font-size: 2rem
       &:hover,
