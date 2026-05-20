@@ -11,7 +11,6 @@ https://keramofenix.ru
 ### 💻 Репозиторий  
 https://github.com/Mariannadtd/keramofenix-frontend
 
-<img width="1596" height="960" alt="2026-05-20_16-05-41" src="https://github.com/user-attachments/assets/2fc3d427-adba-4dc2-b0e9-4d461ffd19d4" />
 <img width="1844" height="960" alt="2026-05-20_16-08-37" src="https://github.com/user-attachments/assets/256142da-5767-476a-8f1f-ec5724ff232c" />
 <img width="1856" height="964" alt="2026-05-20_16-10-20" src="https://github.com/user-attachments/assets/bcf847a6-3f4d-4b80-a3c6-e5918b77b9c4" />
 <img width="1848" height="952" alt="2026-05-20_16-13-22" src="https://github.com/user-attachments/assets/77b3730f-22d3-4879-93a5-7d04d843b2ce" />
