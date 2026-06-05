@@ -40,6 +40,10 @@ const props = defineProps({
         :category="product.category"
       />
     </TransitionGroup>
+
+    <div v-if="$slots.after" class="catalog-after">
+      <slot name="after" />
+    </div>
   </div>
 </template>
 
@@ -59,6 +63,9 @@ const props = defineProps({
     grid-template-columns: repeat(3, minmax(0, 1fr))
   @media (max-width: $medium)
     grid-template-columns: repeat(2, minmax(0, 1fr))
+
+.catalog-after
+  width: 100%
 
 :deep(.card),
 :deep(.skeleton-card)

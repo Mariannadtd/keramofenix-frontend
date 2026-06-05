@@ -103,7 +103,9 @@ const fittingsRandom = computed(() =>
 </script>
 
 <template>
-  <h1 class="sr-only">КерамоФеникс — двери, полы и плитка в Сочи</h1>
+  <h1 class="sr-only">
+    Двери, керамогранит и напольные покрытия в Сочи — КерамоФеникс
+  </h1>
 
   <section class="home-hero" aria-labelledby="home-hero-title">
     <div class="home-hero__inner">
@@ -130,9 +132,12 @@ const fittingsRandom = computed(() =>
 
       <div class="home-hero__content">
         <p class="home-hero__eyebrow">2 салона в Сочи • замер • доставка</p>
-        <h2 id="home-hero-title">Двери, пол, керамогранит</h2>
+        <h2 id="home-hero-title">
+          Двери, керамогранит и напольные покрытия в Сочи
+        </h2>
         <p>
-          Подберем комплект под ваш ремонт и покажем образцы в салоне.
+          Подберем комплект под ваш ремонт, покажем образцы в салоне и поможем
+          совместить двери, пол, плитку и фурнитуру в одном стиле.
         </p>
 
         <div class="home-hero__actions">

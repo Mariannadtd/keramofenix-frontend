@@ -5,6 +5,7 @@ import Search from "./Search.vue";
 import Filter from "./UI/Filter.vue";
 import Button from "./UI/Button.vue";
 import SkeletonCard from "./UI/Preloader.vue";
+import SeoTextBlock from "./SeoTextBlock.vue";
 import { useCatalogPage } from "../composables/useCatalogPage";
 import {
   applyMultiValueFilter,
@@ -19,6 +20,8 @@ import { floorFormOptions } from "../lib/catalogSchema";
 const props = defineProps({
   title: { type: String, default: "Напольные покрытия" },
   lockedForm: { type: String, default: "" },
+  seoTitle: { type: String, default: "" },
+  seoParagraphs: { type: Array, default: () => [] },
 });
 
 const defaultFilters = () => ({
@@ -240,6 +243,14 @@ watch(
 
     <template #loading>
       <SkeletonCard v-for="n in 6" :key="n" />
+    </template>
+
+    <template #after>
+      <SeoTextBlock
+        v-if="props.seoTitle && props.seoParagraphs.length"
+        :title="props.seoTitle"
+        :paragraphs="props.seoParagraphs"
+      />
     </template>
   </Catalog>
 

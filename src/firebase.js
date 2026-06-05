@@ -29,7 +29,7 @@ export const authReady = new Promise((resolve) => {
   });
 });
 
-if (import.meta.env.DEV && typeof window !== "undefined") {
+if (import.meta.env?.DEV && typeof window !== "undefined") {
   window._signIn = async (email, pass) => {
     const res = await signInWithEmailAndPassword(auth, email, pass);
     console.log("[_signIn OK]", res.user.uid, res.user.email);

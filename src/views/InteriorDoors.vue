@@ -4,6 +4,7 @@ import Search from "../components/Search.vue";
 import Filter from "../components/UI/Filter.vue";
 import Button from "../components/UI/Button.vue";
 import SkeletonCard from "../components/UI/Preloader.vue";
+import SeoTextBlock from "../components/SeoTextBlock.vue";
 import { useCatalogPage } from "../composables/useCatalogPage";
 import {
   applySearch,
@@ -25,6 +26,11 @@ const filtersConfig = [
     type: "select",
     options: ["глухая", "с остеклением", "с зеркалом"],
   },
+];
+
+const seoParagraphs = [
+  "В КерамоФеникс можно купить межкомнатные двери в Сочи для квартиры, дома или коммерческого помещения. В салонах показываем живые образцы полотен, оттенков, покрытий и фурнитуры, чтобы дверь совпала с полом, стенами и общим стилем ремонта.",
+  "Помогаем подобрать комплект по размеру проема, бюджету и условиям эксплуатации: полотно, короб, наличники, доборы, ручки и петли. Работаем с адресами в Сочи, консультируем по замеру и доставке из салонов на ул. Гагарина, 63 и ул. Донская, 3/3.",
 ];
 
 const {
@@ -56,7 +62,7 @@ const {
 
 <template>
   <Catalog
-    title="Межкомнатные двери"
+    title="Купить межкомнатные двери в Сочи"
     :products="loading ? [] : processed"
     :loading="loading"
     title-margin="4rem auto 2rem"
@@ -81,6 +87,13 @@ const {
 
     <template #loading>
       <SkeletonCard v-for="n in 6" :key="n" />
+    </template>
+
+    <template #after>
+      <SeoTextBlock
+        title="Межкомнатные двери в Сочи с подбором в салоне"
+        :paragraphs="seoParagraphs"
+      />
     </template>
   </Catalog>
 

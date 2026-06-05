@@ -4,6 +4,7 @@ import Search from "../components/Search.vue";
 import Filter from "../components/UI/Filter.vue";
 import Button from "../components/UI/Button.vue";
 import SkeletonCard from "../components/UI/Preloader.vue";
+import SeoTextBlock from "../components/SeoTextBlock.vue";
 import { useCatalogPage } from "../composables/useCatalogPage";
 import {
   applySearch,
@@ -51,6 +52,11 @@ const filtersConfig = [sortFilter, ...baseFilters];
 
 const filterKeys = baseFilters.map((filter) => filter.key);
 
+const seoParagraphs = [
+  "Входные двери в Сочи подбираем для квартиры, частного дома и помещений с разными требованиями к теплоизоляции, замкам и стороне открывания. В каталоге можно выбрать модели с терморазрывом, зеркалом, ковкой и разными вариантами отделки.",
+  "Перед покупкой поможем сверить размеры, комплектацию и фурнитуру, объясним разницу по конструкциям и назначению. Образцы можно посмотреть в салонах КерамоФеникс на ул. Гагарина, 63 и ул. Донская, 3/3, также консультируем по доставке и замеру.",
+];
+
 const {
   products,
   searchQuery,
@@ -79,7 +85,7 @@ const {
 
 <template>
   <Catalog
-    title="Входные двери"
+    title="Купить входные двери в Сочи"
     :products="loading ? [] : processed"
     :loading="loading"
     title-margin="4rem auto 2rem"
@@ -105,6 +111,13 @@ const {
 
     <template #loading>
       <SkeletonCard v-for="n in 6" :key="n" />
+    </template>
+
+    <template #after>
+      <SeoTextBlock
+        title="Входные двери для квартиры и дома"
+        :paragraphs="seoParagraphs"
+      />
     </template>
   </Catalog>
 

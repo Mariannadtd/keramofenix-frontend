@@ -58,12 +58,13 @@ const isExhibitMark = computed(
 const categoryMeta = {
   interiors: { name: "Межкомнатные двери", path: "/interiors" },
   exteriors: { name: "Входные двери", path: "/exteriors" },
+  porcelain: { name: "Керамогранит", path: "/porcelain-stoneware" },
   floors: { name: "Напольные покрытия", path: "/floors" },
   fittings: { name: "Фурнитура", path: "/fittings" },
 };
 
 function productCanonical() {
-  return `${SITE_URL}${route.fullPath}`;
+  return `${SITE_URL}${route.path}`;
 }
 
 function productName() {
