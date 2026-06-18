@@ -26,7 +26,7 @@ const props = defineProps({
       </slot>
     </div>
 
-    <TransitionGroup v-else name="cards" tag="div" class="cards">
+    <div v-else class="cards">
       <Card
         v-for="product in products"
         :key="product.id"
@@ -39,7 +39,7 @@ const props = defineProps({
         :isExhibit="product.isExhibit"
         :category="product.category"
       />
-    </TransitionGroup>
+    </div>
 
     <div v-if="$slots.after" class="catalog-after">
       <slot name="after" />
