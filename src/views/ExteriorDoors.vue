@@ -12,6 +12,7 @@ import {
   sortByPrice,
   sortFilter,
 } from "../lib/catalogFilters";
+import { exteriorFormOptions } from "../lib/catalogSchema";
 
 const defaultFilters = () => ({
   sort: "",
@@ -26,7 +27,7 @@ const baseFilters = [
     key: "form",
     label: "Вид",
     type: "select",
-    options: ["с ковкой", "с ковкой / остеклением", "с зеркалом"],
+    options: exteriorFormOptions,
   },
   {
     key: "side",

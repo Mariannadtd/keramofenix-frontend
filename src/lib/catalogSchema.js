@@ -6,6 +6,12 @@ export const fittingsGroups = [
 ];
 export const fittingsGroupOptions = fittingsGroups.map((g) => g.label);
 
+export const exteriorFormOptions = [
+  "глухая",
+  "с ковкой / стеклопакетом",
+  "с зеркалом",
+];
+
 export const fittingsSubtypesByGroup = {
   accessories: [
     "автопороги дверные",
@@ -61,7 +67,7 @@ export const categoryFields = {
       key: "form",
       label: "Вид",
       type: "select",
-      options: ["с ковкой", "с ковкой / стеклопакетом", "с зеркалом"],
+      options: exteriorFormOptions,
     },
     {
       key: "side",
