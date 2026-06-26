@@ -2,6 +2,7 @@
   "hosting": {
     "public": "dist",
     "predeploy": ["npm run build"],
+    "trailingSlash": false,
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
 
     "redirects": [
