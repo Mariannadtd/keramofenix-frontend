@@ -394,7 +394,7 @@ async function submitOrder(contactData) {
 </template>
 
 <style scoped lang="sass">
-@import "../assets/css/main.sass"
+@use "../assets/css/main.sass" as *
 
 h1
   display: flex
@@ -422,7 +422,7 @@ h1
 .cart-item
   display: grid
   grid-template-columns: 10rem 1fr auto auto auto
-  grid-template-areas: unquote('"img title qty price remove" "img pgbtn pgbtn pgbtn pgbtn" "img pgpanel pgpanel pgpanel pgpanel" "img pgsum pgsum pgsum pgsum" "img linetotal linetotal linetotal linetotal"')
+  grid-template-areas: "img title qty price remove" "img pgbtn pgbtn pgbtn pgbtn" "img pgpanel pgpanel pgpanel pgpanel" "img pgsum pgsum pgsum pgsum" "img linetotal linetotal linetotal linetotal"
   gap: .75rem 1rem
   padding: 1rem 0
   border-bottom: 1px solid #80808040
@@ -572,7 +572,7 @@ h1
   background: none
   border: none
   font-size: 1.5rem
-  ::v-deep(.back__img)
+  :deep(.back__img)
     width: 1.5rem
     height: 1.5rem
     transition: transform .2s ease
@@ -580,7 +580,7 @@ h1
   &:hover
     background-color: #f5f5f5
     color: black
-    ::v-deep(.back__img)
+    :deep(.back__img)
       transform: rotate(180deg) translateX(5px) scale(1.2)
 
 .cart-controls
@@ -608,7 +608,7 @@ h1
 @media (max-width: $small)
   .cart-item
     grid-template-columns: 7rem 1fr auto
-    grid-template-areas: unquote('"img title remove" "img qty price" "img pgbtn pgbtn" "img pgpanel pgpanel" "img pgsum pgsum" "img linetotal linetotal"')
+    grid-template-areas: "img title remove" "img qty price" "img pgbtn pgbtn" "img pgpanel pgpanel" "img pgsum pgsum" "img linetotal linetotal"
   .c-img
     width: 7rem
     height: 7rem
@@ -692,7 +692,7 @@ h1
     display: none
   .pg-row
     grid-template-columns: 1fr auto
-    grid-template-areas: unquote('"name sum" "unit unit" "price qty"')
+    grid-template-areas: "name sum" "unit unit" "price qty"
     gap: .35rem .5rem
     padding: .6rem .25rem
     align-items: center

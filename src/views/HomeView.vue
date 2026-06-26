@@ -7,7 +7,7 @@ import Modal from "../components/UI/Modal.vue";
 import Catalog from "../components/Catalog.vue";
 import Advantages from "../components/Advantages.vue";
 import { useRouter } from "vue-router";
-import Map from "../components/Map.vue";
+import ContactsSection from "../components/ContactsSection.vue";
 import Stocks from "../components/Stocks.vue";
 import { normalizeFloorText } from "../lib/catalogFilters";
 
@@ -233,13 +233,13 @@ const fittingsRandom = computed(() =>
 
   <Advantages />
   <Stocks />
-  <Map />
+  <ContactsSection title-tag="h2" />
 
   <Modal v-if="showModal" @close="showModal = false" />
 </template>
 
 <style scoped lang="sass">
-@import "../assets/css/main.sass"
+@use "../assets/css/main.sass" as *
 .sr-only
   position: absolute
   width: 1px
@@ -390,9 +390,6 @@ const fittingsRandom = computed(() =>
       margin-left: 1rem
       width: 2rem
       height: 2rem
-
-.map
-  padding: 4rem 0
 
 .skeleton-grid
   display: grid

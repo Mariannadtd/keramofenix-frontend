@@ -176,8 +176,8 @@ const filtersConfig = computed(() => {
 </template>
 
 <style scoped lang="sass">
-@import "../assets/css/main.sass"
-@import "../assets/css/catalog-page.sass"
+@use "../assets/css/main.sass" as *
+@use "../assets/css/catalog-page.sass" as *
 
 @media (max-width: $large)
   .filters-row

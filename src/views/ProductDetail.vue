@@ -257,7 +257,7 @@ function prev() {
 </template>
 
 <style scoped lang="sass">
-@import "../assets/css/main.sass"
+@use "../assets/css/main.sass" as *
 
 .title
   margin-bottom: 3rem !important
@@ -490,7 +490,7 @@ function prev() {
   @media (max-width: $large)
     width: 100%
 
-  ::v-deep(.back__img)
+  :deep(.back__img)
     width: 1.5rem
     height: 1.5rem
     transition: transform .2s ease
@@ -501,7 +501,7 @@ function prev() {
     background-color: #f5f5f5
     border: none
 
-    ::v-deep(.back__img)
+    :deep(.back__img)
       transform: rotate(180deg) translateX(5px) scale(1.2)
 
 .btn-add

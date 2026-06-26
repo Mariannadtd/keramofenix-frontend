@@ -42,7 +42,7 @@ const stocks = [
 </template>
 
 <style scoped lang="sass">
-@import "../assets/css/main.sass"
+@use "../assets/css/main.sass" as *
 
 .stocks
   padding: 2rem 0 4rem

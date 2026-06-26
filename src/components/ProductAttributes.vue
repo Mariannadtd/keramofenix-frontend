@@ -78,7 +78,7 @@ const twoCols = computed(() => rows.value.length > 6);
 </template>
 
 <style scoped lang="sass">
-@import "../assets/css/main.sass"
+@use "../assets/css/main.sass" as *
 
 .attrs
   margin-top: 1rem

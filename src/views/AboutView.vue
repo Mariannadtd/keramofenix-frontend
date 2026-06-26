@@ -133,17 +133,17 @@ const topSlides = [
 .top-slider.slider-wrapper
   margin: 0
 
-::v-deep .slider .track
+:deep(.slider .track)
   display: flex
   transition: transform .5s ease
 
-::v-deep .slider .slide
+:deep(.slider .slide)
   padding: 0
   box-sizing: border-box
   display: flex
   justify-content: center
 
-::v-deep .slide__img
+:deep(.slide__img)
   width: auto
   max-width: 100%
   height: auto
@@ -176,7 +176,7 @@ const topSlides = [
     align-items: center
   .top-slider
     max-width: 100%
-  .top-slider ::v-deep .slide__img
+  .top-slider :deep(.slide__img)
     max-height: 40rem
   .video-wrapper
     flex-direction: column
@@ -185,11 +185,11 @@ const topSlides = [
     max-width: 100%
     height: 500px
 
-::v-deep .slider .slide
+:deep(.slider .slide)
   border-radius: .75rem
   overflow: hidden
 
-::v-deep .slide__img
+:deep(.slide__img)
   border-radius: .75rem
   box-shadow: 0 2px 10px rgba(0,0,0,0.2)
   display: block

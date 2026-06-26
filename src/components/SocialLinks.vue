@@ -34,7 +34,7 @@ const itemCount = computed(() => cartStore.totalCount);
 </template>
 
 <style scoped lang="sass">
-@import "../assets/css/main.sass"
+@use "../assets/css/main.sass" as *
 
 .social-links
   display: flex

@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenAPI Studio Preview</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f5;
+        --panel: #ffffff;
+        --panel-2: #f0f4f1;
+        --ink: #17201d;
+        --muted: #69756f;
+        --line: #dce3de;
+        --soft-line: #e9eee9;
+        --green: #2f8f68;
+        --green-dark: #1d6c4d;
+        --blue: #2c6fb6;
+        --yellow: #b7791f;
+        --red: #c2413a;
+        --violet: #7357b8;
+        --shadow: 0 18px 48px rgba(25, 36, 31, 0.1);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.72), transparent 220px),
+          var(--bg);
+        color: var(--ink);
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      .app {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 0 28px;
+        background: rgba(255, 255, 255, 0.88);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(16px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 190px;
+      }
+
+      .mark {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: #17352a;
+        color: white;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .brand strong {
+        display: block;
+        font-size: 15px;
+        line-height: 1.1;
+      }
+
+      .brand span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 2px;
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcfb;
+      }
+
+      .nav a,
+      .nav button {
+        border: 0;
+        border-radius: 6px;
+        padding: 8px 12px;
+        color: var(--muted);
+        background: transparent;
+        text-decoration: none;
+        cursor: default;
+        font-size: 14px;
+      }
+
+      .nav .active {
+        color: var(--ink);
+        background: #e7eee9;
+        font-weight: 700;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        min-width: 260px;
+      }
+
+      .select,
+      .ghost,
+      .primary {
+        height: 38px;
+        border-radius: 7px;
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--ink);
+        padding: 0 12px;
+      }
+
+      .primary {
+        border-color: var(--green-dark);
+        background: var(--green);
+        color: white;
+        font-weight: 700;
+      }
+
+      .workspace {
+        width: min(1520px, 100%);
+        margin: 0 auto;
+        padding: 22px 24px 26px;
+        display: grid;
+        grid-template-columns: minmax(330px, 0.95fr) minmax(420px, 1.35fr) minmax(320px, 0.9fr);
+        gap: 16px;
+      }
+
+      .panel {
+        min-width: 0;
+        overflow: hidden;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .panel-head {
+        min-height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--soft-line);
+        background: #fbfcfb;
+      }
+
+      .panel-title {
+        min-width: 0;
+      }
+
+      .panel-title h2 {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.25;
+      }
+
+      .panel-title p {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .pill,
+      .mini-button {
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: white;
+        padding: 0 10px;
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .pill.ok {
+        border-color: #b7dbc9;
+        background: #ecf8f1;
+        color: var(--green-dark);
+        font-weight: 700;
+      }
+
+      .editor {
+        display: grid;
+        grid-template-columns: 46px 1fr;
+        height: 650px;
+        background: #17201d;
+        color: #d9efe3;
+        font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.62;
+      }
+
+      .lines {
+        padding: 16px 9px;
+        text-align: right;
+        color: #6f877e;
+        user-select: none;
+        background: #121916;
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .code {
+        margin: 0;
+        padding: 16px;
+        overflow: auto;
+        white-space: pre;
+      }
+
+      .key {
+        color: #86d8a7;
+      }
+
+      .str {
+        color: #f3d38b;
+      }
+
+      .num {
+        color: #9ecbff;
+      }
+
+      .method {
+        width: 54px;
+        height: 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        color: white;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .get {
+        background: var(--blue);
+      }
+
+      .post {
+        background: var(--green);
+      }
+
+      .delete {
+        background: var(--red);
+      }
+
+      .viewer-body {
+        height: 650px;
+        overflow: auto;
+        background: #fcfdfc;
+      }
+
+      .endpoint {
+        border-bottom: 1px solid var(--soft-line);
+      }
+
+      .endpoint-main {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 14px;
+      }
+
+      .path {
+        min-width: 0;
+      }
+
+      .path strong {
+        display: block;
+        overflow-wrap: anywhere;
+        font-size: 14px;
+      }
+
+      .path span {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .endpoint.expanded {
+        background: white;
+      }
+
+      .endpoint-details {
+        padding: 0 14px 14px 80px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .detail {
+        min-height: 86px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        background: var(--panel-2);
+      }
+
+      .detail b {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 12px;
+      }
+
+      .detail code,
+      .response code,
+      .curl code {
+        font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+        font-size: 12px;
+      }
+
+      .detail code {
+        display: block;
+        color: #395047;
+        overflow-wrap: anywhere;
+      }
+
+      .side-body {
+        height: 650px;
+        overflow: auto;
+        padding: 14px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+
+      .form-row {
+        display: grid;
+        gap: 7px;
+      }
+
+      label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: #fbfcfb;
+        color: var(--ink);
+        padding: 10px;
+      }
+
+      textarea {
+        min-height: 112px;
+        resize: vertical;
+        font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+        font-size: 12px;
+      }
+
+      .run-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .response,
+      .curl,
+      .history {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcfb;
+        overflow: hidden;
+      }
+
+      .response-head,
+      .history-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px;
+        border-bottom: 1px solid var(--soft-line);
+      }
+
+      .status {
+        color: var(--green-dark);
+        font-weight: 800;
+        font-size: 13px;
+      }
+
+      .response pre,
+      .curl pre {
+        margin: 0;
+        padding: 12px;
+        overflow: auto;
+        color: #20322b;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .analytics {
+        width: min(1520px, 100%);
+        margin: 0 auto;
+        padding: 0 24px 28px;
+        display: grid;
+        grid-template-columns: 1.2fr repeat(4, minmax(130px, 1fr));
+        gap: 12px;
+      }
+
+      .metric {
+        min-height: 92px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: white;
+        box-shadow: 0 8px 28px rgba(25, 36, 31, 0.07);
+        padding: 14px;
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 10px;
+        font-size: 22px;
+        line-height: 1.1;
+      }
+
+      .metric.wide {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .history-list {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      footer {
+        margin-top: auto;
+        border-top: 1px solid var(--line);
+        padding: 18px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        color: var(--muted);
+        background: #ffffff;
+        font-size: 13px;
+      }
+
+      footer a {
+        color: var(--green-dark);
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      @media (max-width: 1180px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+
+        .editor,
+        .viewer-body,
+        .side-body {
+          height: auto;
+          min-height: 430px;
+          max-height: none;
+        }
+
+        .analytics {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 760px) {
+        .header {
+          height: auto;
+          min-height: 64px;
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 14px;
+        }
+
+        .brand,
+        .actions,
+        .nav {
+          width: 100%;
+        }
+
+        .nav {
+          overflow-x: auto;
+        }
+
+        .actions {
+          justify-content: flex-start;
+          flex-wrap: wrap;
+          min-width: 0;
+        }
+
+        .workspace,
+        .analytics {
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+
+        .detail-grid,
+        .analytics {
+          grid-template-columns: 1fr;
+        }
+
+        .endpoint-main {
+          grid-template-columns: 1fr;
+          align-items: start;
+        }
+
+        .endpoint-details {
+          padding-left: 14px;
+        }
+
+        .run-row {
+          grid-template-columns: 1fr;
+        }
+
+        .metric.wide {
+          grid-template-columns: 1fr;
+        }
+
+        footer {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 16px 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="brand">
+          <div class="mark">OA</div>
+          <div>
+            <strong>OpenAPI Studio</strong>
+            <span>Editor, viewer, REST client</span>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Primary">
+          <a class="active" href="#">Workspace</a>
+          <a href="#">History</a>
+          <a href="#">About</a>
+        </nav>
+
+        <div class="actions">
+          <select class="select" aria-label="Language">
+            <option>EN</option>
+            <option>RU</option>
+          </select>
+          <button class="ghost">Sign In</button>
+          <button class="primary">Sign Up</button>
+        </div>
+      </header>
+
+      <main>
+        <section class="workspace" aria-label="OpenAPI workspace">
+          <article class="panel">
+            <div class="panel-head">
+              <div class="panel-title">
+                <h2>Swagger Editor</h2>
+                <p>YAML detected</p>
+              </div>
+              <div class="toolbar">
+                <span class="pill ok">Valid</span>
+                <button class="mini-button">JSON</button>
+                <button class="mini-button">Save</button>
+              </div>
+            </div>
+
+            <div class="editor" aria-label="Code editor preview">
+              <div class="lines">1<br />2<br />3<br />4<br />5<br />6<br />7<br />8<br />9<br />10<br />11<br />12<br />13<br />14<br />15<br />16<br />17<br />18<br />19<br />20</div>
+              <pre class="code"><span class="key">openapi</span>: <span class="str">3.0.3</span>
+<span class="key">info</span>:
+  <span class="key">title</span>: <span class="str">Demo API</span>
+  <span class="key">version</span>: <span class="str">1.0.0</span>
+<span class="key">servers</span>:
+  - <span class="key">url</span>: <span class="str">https://jsonplaceholder.typicode.com</span>
+<span class="key">paths</span>:
+  <span class="key">/posts/{id}</span>:
+    <span class="key">get</span>:
+      <span class="key">summary</span>: <span class="str">Get post by id</span>
+      <span class="key">parameters</span>:
+        - <span class="key">name</span>: <span class="str">id</span>
+          <span class="key">in</span>: <span class="str">path</span>
+          <span class="key">required</span>: <span class="str">true</span>
+          <span class="key">schema</span>:
+            <span class="key">type</span>: <span class="str">integer</span>
+      <span class="key">responses</span>:
+        <span class="str">"200"</span>:
+          <span class="key">description</span>: <span class="str">OK</span></pre>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div class="panel-title">
+                <h2>Swagger Viewer</h2>
+                <p>4 endpoints from schema</p>
+              </div>
+              <div class="toolbar">
+                <button class="mini-button">Collapse</button>
+                <button class="mini-button">Export</button>
+              </div>
+            </div>
+
+            <div class="viewer-body">
+              <section class="endpoint expanded">
+                <div class="endpoint-main">
+                  <span class="method get">GET</span>
+                  <div class="path">
+                    <strong>/posts/{id}</strong>
+                    <span>Get post by id</span>
+                  </div>
+                  <span class="pill ok">200 OK</span>
+                </div>
+                <div class="endpoint-details">
+                  <div class="detail-grid">
+                    <div class="detail">
+                      <b>Path parameters</b>
+                      <code>id: integer, required</code>
+                    </div>
+                    <div class="detail">
+                      <b>Request</b>
+                      <code>No body</code>
+                    </div>
+                    <div class="detail">
+                      <b>Responses</b>
+                      <code>200 application/json</code>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="endpoint">
+                <div class="endpoint-main">
+                  <span class="method post">POST</span>
+                  <div class="path">
+                    <strong>/posts</strong>
+                    <span>Create post</span>
+                  </div>
+                  <span class="pill">Body</span>
+                </div>
+              </section>
+
+              <section class="endpoint">
+                <div class="endpoint-main">
+                  <span class="method get">GET</span>
+                  <div class="path">
+                    <strong>/users</strong>
+                    <span>List users</span>
+                  </div>
+                  <span class="pill">Query</span>
+                </div>
+              </section>
+
+              <section class="endpoint">
+                <div class="endpoint-main">
+                  <span class="method delete">DEL</span>
+                  <div class="path">
+                    <strong>/posts/{id}</strong>
+                    <span>Delete post</span>
+                  </div>
+                  <span class="pill">204</span>
+                </div>
+              </section>
+            </div>
+          </article>
+
+          <aside class="panel">
+            <div class="panel-head">
+              <div class="panel-title">
+                <h2>Try It Out</h2>
+                <p>GET /posts/{id}</p>
+              </div>
+              <span class="pill">Proxy</span>
+            </div>
+
+            <div class="side-body">
+              <div class="form-row">
+                <label for="server">Server</label>
+                <input id="server" value="https://jsonplaceholder.typicode.com" />
+              </div>
+
+              <div class="form-row">
+                <label for="path-id">Path parameter: id</label>
+                <input id="path-id" value="1" />
+              </div>
+
+              <div class="form-row">
+                <label for="headers">Headers</label>
+                <textarea id="headers">{
+  "Accept": "application/json"
+}</textarea>
+              </div>
+
+              <div class="run-row">
+                <button class="primary">Execute</button>
+                <button class="ghost">Generate cURL</button>
+              </div>
+
+              <div class="response">
+                <div class="response-head">
+                  <strong>Response</strong>
+                  <span class="status">200 - 184 ms</span>
+                </div>
+                <pre><code>{
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere...",
+  "body": "quia et suscipit..."
+}</code></pre>
+              </div>
+
+              <div class="curl">
+                <pre><code>curl -X GET \
+  "https://jsonplaceholder.typicode.com/posts/1" \
+  -H "Accept: application/json"</code></pre>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <section class="analytics" aria-label="History and analytics preview">
+          <div class="metric wide">
+            <div>
+              <span>Latest requests</span>
+              <strong>History & Analytics</strong>
+            </div>
+            <div class="history-list">
+              <span class="method get">GET</span>
+              <span class="method post">POST</span>
+              <span class="method get">GET</span>
+            </div>
+          </div>
+          <div class="metric">
+            <span>Average duration</span>
+            <strong>184 ms</strong>
+          </div>
+          <div class="metric">
+            <span>Status</span>
+            <strong>200</strong>
+          </div>
+          <div class="metric">
+            <span>Request size</span>
+            <strong>326 B</strong>
+          </div>
+          <div class="metric">
+            <span>Response size</span>
+            <strong>1.1 KB</strong>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <span>RS School team project preview</span>
+        <a href="#">About</a>
+      </footer>
+    </div>
+  </body>
+</html>

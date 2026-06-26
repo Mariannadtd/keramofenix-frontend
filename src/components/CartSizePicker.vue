@@ -48,7 +48,7 @@ const value = computed({
 </template>
 
 <style scoped lang="sass">
-@import "../assets/css/main.sass"
+@use "../assets/css/main.sass" as *
 
 .size
   display: grid
@@ -81,10 +81,10 @@ const value = computed({
     border-color: var(--main-color)
 
 .c-pg-panel
-  ::v-deep(.size__label)
+  :deep(.size__label)
     font-size: 1.05rem
     font-weight: 700
-  ::v-deep(.size__btn)
+  :deep(.size__btn)
     font-size: 1rem
     min-width: 52px
     height: 32px

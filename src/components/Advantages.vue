@@ -40,7 +40,7 @@ const advantages = [
 </template>
 
 <style lang="sass" scoped>
-@import "../assets/css/main.sass"
+@use "../assets/css/main.sass" as *
 
 .heading-1
   display: flex
