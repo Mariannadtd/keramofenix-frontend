@@ -1,4 +1,5 @@
 import {
+  buildGoogleMerchantXml,
   buildSitemapXml,
   buildYml,
   defaultDescription,
@@ -26,14 +27,15 @@ await Promise.all([
       currencyId: "RUR",
       date: yandexYmlDate,
       description: yandexDescription,
-      includeVendor: false,
+      vendor: (product) => product.manufacturerName || "",
       nameMaxLength: 250,
     }),
   ),
+  writeYmlFile("public/google-products.xml", buildGoogleMerchantXml(products)),
   writeYmlFile("public/sitemap.xml", buildSitemapXml(products)),
 ]);
 
 console.log(
-  "Files written: public/2gis-products.yml, public/yandex-products.yml, public/sitemap.xml",
+  "Files written: public/2gis-products.yml, public/yandex-products.yml, public/google-products.xml, public/sitemap.xml",
 );
 console.log(`Products exported: ${products.length}`);

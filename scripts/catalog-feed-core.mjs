@@ -142,6 +142,45 @@ export function limitText(value = "", maxLength = 0) {
   return `${text.slice(0, Math.max(0, maxLength - 3)).trim()}...`;
 }
 
+function normalizeComparableText(value = "") {
+  return compactText(value).toLowerCase();
+}
+
+function hasTextPart(text = "", part = "") {
+  const normalizedText = normalizeComparableText(text);
+  const normalizedPart = normalizeComparableText(part);
+  return Boolean(normalizedPart && normalizedText.includes(normalizedPart));
+}
+
+function pushUniquePart(parts, part) {
+  const value = compactText(part);
+  if (!value) return;
+  if (
+    parts.some(
+      (existing) => hasTextPart(existing, value) || hasTextPart(value, existing),
+    )
+  ) {
+    return;
+  }
+  parts.push(value);
+}
+
+export function productDisplayName(product, maxLength = 150) {
+  const rawName = compactText(product.name || "Товар");
+  const brand = compactText(product.manufacturerName || "");
+  const manufacturerName = compactText(product.manufacturer || "");
+  const color = compactText(product.color || "");
+  const isThinName = rawName.length < 8 || /^\d+[\w\-./]*$/u.test(rawName);
+  const parts = [];
+
+  if (brand && !hasTextPart(rawName, brand)) parts.push(brand);
+  parts.push(rawName);
+  if (isThinName) pushUniquePart(parts, manufacturerName);
+  pushUniquePart(parts, color);
+
+  return limitText(parts.join(" "), maxLength);
+}
+
 export function toAbsoluteUrl(value = "") {
   if (!value) return "";
   if (/^https?:\/\//i.test(value)) return value;
@@ -190,7 +229,7 @@ export function productCanonical(product) {
 export function productSeo(product) {
   const key = categoryKey(product);
   const category = categoryMeta[key] || categoryMeta.floors;
-  const name = compactText(product.name || "Товар");
+  const name = productDisplayName(product);
   const price = Number(product.price);
   const priceText = Number.isFinite(price)
     ? `${Math.round(price).toLocaleString("ru-RU")} ₽`
@@ -226,7 +265,12 @@ export function defaultDescription(product, categoryName) {
 }
 
 export function yandexDescription(product, categoryName) {
-  return limitText(product.description || `${categoryName} в КерамоФеникс.`, 90);
+  const name = productDisplayName(product, 150);
+  return limitText(
+    product.description ||
+      `${name} — ${categoryName.toLowerCase()} в Сочи. Подберем комплект, фурнитуру и доставку в КерамоФеникс.`,
+    300,
+  );
 }
 
 export function isoYmlDate() {
@@ -261,14 +305,14 @@ export function offerXml(product, options = {}) {
   const price = Math.round(Number(product.price));
   const images = Array.isArray(product.images) ? product.images : [];
   const picture = toAbsoluteUrl(images[0]);
-  const vendor = product.manufacturerName || product.manufacturer;
+  const vendor = options.vendor
+    ? options.vendor(product)
+    : product.manufacturerName || product.manufacturer;
   const description = (options.description || defaultDescription)(
     product,
     category.name,
   );
-  const name = options.nameMaxLength
-    ? limitText(product.name, options.nameMaxLength)
-    : String(product.name).trim();
+  const name = productDisplayName(product, options.nameMaxLength || 250);
 
   const lines = [
     `    <offer id="${escapeXml(product.id)}" available="true">`,
@@ -290,6 +334,70 @@ export function offerXml(product, options = {}) {
   lines.push("    </offer>");
 
   return lines.join("\n");
+}
+
+export function googleDescription(product, categoryName) {
+  const name = productDisplayName(product, 150);
+  return limitText(
+    product.description ||
+      `${name} — ${categoryName.toLowerCase()} в Сочи. Карточка с ценой, фото и характеристиками. Подбор дверей, погонажа, фурнитуры и доставки в КерамоФеникс.`,
+    5000,
+  );
+}
+
+export function buildGoogleMerchantXml(products) {
+  const items = products
+    .map((product) => {
+      const key = categoryKey(product);
+      const category = categoryMeta[key];
+      const price = Math.round(Number(product.price));
+      const images = Array.isArray(product.images) ? product.images : [];
+      const image = toAbsoluteUrl(images[0]);
+      const title = productDisplayName(product, 150);
+      const description = googleDescription(product, category.name);
+      const brand = compactText(product.manufacturerName || SHOP_NAME);
+      const mpn = compactText(product.manufacturer || "");
+      const lines = [
+        "    <item>",
+        `      <g:id>${escapeXml(product.id)}</g:id>`,
+        `      <g:title>${escapeXml(title)}</g:title>`,
+        `      <g:description>${escapeXml(description)}</g:description>`,
+        `      <g:link>${escapeXml(offerUrl(product))}</g:link>`,
+        `      <g:image_link>${escapeXml(image)}</g:image_link>`,
+        "      <g:availability>in_stock</g:availability>",
+        `      <g:price>${escapeXml(`${price} RUB`)}</g:price>`,
+        "      <g:condition>new</g:condition>",
+        `      <g:brand>${escapeXml(brand)}</g:brand>`,
+        `      <g:product_type>${escapeXml(category.name)}</g:product_type>`,
+      ];
+
+      images.slice(1, 11).forEach((src) => {
+        lines.push(
+          `      <g:additional_image_link>${escapeXml(toAbsoluteUrl(src))}</g:additional_image_link>`,
+        );
+      });
+
+      if (mpn && !hasTextPart(mpn, brand) && !hasTextPart(mpn, title)) {
+        lines.push(`      <g:mpn>${escapeXml(mpn)}</g:mpn>`);
+      } else {
+        lines.push("      <g:identifier_exists>no</g:identifier_exists>");
+      }
+
+      lines.push("    </item>");
+      return lines.join("\n");
+    })
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <title>${escapeXml(SHOP_NAME)}</title>
+    <link>${escapeXml(SITE_URL)}</link>
+    <description>${escapeXml(SHOP_NAME)}: двери, керамогранит, напольные покрытия и фурнитура в Сочи.</description>
+${items}
+  </channel>
+</rss>
+`;
 }
 
 export function buildYml(products, options = {}) {

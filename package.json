@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5174",
     "generate-feeds": "node scripts/generate-feeds.mjs",
+    "generate-google-feed": "node scripts/generate-google-feed.mjs",
     "generate-2gis-feed": "node scripts/generate-2gis-feed.mjs",
     "generate-yandex-feed": "node scripts/generate-yandex-feed.mjs",
     "generate-sitemap": "node scripts/generate-sitemap.mjs",

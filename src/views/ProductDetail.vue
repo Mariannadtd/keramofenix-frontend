@@ -12,6 +12,7 @@ import {
   SITE_PHONE,
   SITE_URL,
   formatPriceForSeo,
+  productDisplayName,
   setCanonical,
   setJsonLd,
   setMeta,
@@ -68,7 +69,7 @@ function productCanonical() {
 }
 
 function productName() {
-  return String(product.value?.name || "").trim();
+  return productDisplayName(product.value);
 }
 
 function productDescription() {
@@ -194,7 +195,7 @@ function prev() {
       <div class="content__wrapper">
         <div class="gallery">
           <div v-if="images.length" class="main-frame" @click="open(0)">
-            <img :src="images[0]" class="main-img" :alt="product.name" />
+            <img :src="images[0]" class="main-img" :alt="productName()" />
             <div class="pd-badges">
               <Badge
                 v-if="isInCart"
@@ -222,13 +223,13 @@ function prev() {
               :src="src"
               class="thumb-img"
               @click="open(i)"
-              :alt="`${product.name} — фото ${i + 1}`"
+              :alt="`${productName()} — фото ${i + 1}`"
             />
           </div>
         </div>
 
         <div class="info">
-          <h1 class="title">{{ product.name }}</h1>
+          <h1 class="title">{{ productName() }}</h1>
           <p class="cat">Категория: {{ product.category }}</p>
           <ProductAttributes :product="product" />
           <p class="desc">{{ product.description }}</p>
@@ -247,7 +248,7 @@ function prev() {
         <button class="nav prev" @click="prev">
           <img src="../assets/img/nav-arrow.png" alt="" />
         </button>
-        <img :src="images[currentIdx]" class="modal-img" :alt="product.name" />
+        <img :src="images[currentIdx]" class="modal-img" :alt="productName()" />
         <button class="nav next" @click="next">
           <img src="../assets/img/nav-arrow.png" alt="" />
         </button>

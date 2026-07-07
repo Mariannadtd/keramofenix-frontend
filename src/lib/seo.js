@@ -10,6 +10,51 @@ export function toAbsoluteUrl(value = "") {
   return `${SITE_URL}${value.startsWith("/") ? value : `/${value}`}`;
 }
 
+function compactText(value = "") {
+  return String(value).replace(/\s+/g, " ").trim();
+}
+
+function limitText(value = "", maxLength = 0) {
+  const text = compactText(value);
+  if (!maxLength || text.length <= maxLength) return text;
+  return `${text.slice(0, Math.max(0, maxLength - 3)).trim()}...`;
+}
+
+function hasTextPart(text = "", part = "") {
+  const normalizedText = compactText(text).toLowerCase();
+  const normalizedPart = compactText(part).toLowerCase();
+  return Boolean(normalizedPart && normalizedText.includes(normalizedPart));
+}
+
+function pushUniquePart(parts, part) {
+  const value = compactText(part);
+  if (!value) return;
+  if (
+    parts.some(
+      (existing) => hasTextPart(existing, value) || hasTextPart(value, existing),
+    )
+  ) {
+    return;
+  }
+  parts.push(value);
+}
+
+export function productDisplayName(product, maxLength = 150) {
+  const rawName = compactText(product?.name || "Товар");
+  const brand = compactText(product?.manufacturerName || "");
+  const manufacturerName = compactText(product?.manufacturer || "");
+  const color = compactText(product?.color || "");
+  const isThinName = rawName.length < 8 || /^\d+[\w\-./]*$/u.test(rawName);
+  const parts = [];
+
+  if (brand && !hasTextPart(rawName, brand)) parts.push(brand);
+  parts.push(rawName);
+  if (isThinName) pushUniquePart(parts, manufacturerName);
+  pushUniquePart(parts, color);
+
+  return limitText(parts.join(" "), maxLength);
+}
+
 export function setMeta(name, content) {
   if (!content) return removeMeta(name);
   let tag = document.querySelector(`meta[name="${name}"]`);
