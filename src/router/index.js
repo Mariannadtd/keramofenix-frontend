@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { auth } from "../firebase";
 import {
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -189,6 +188,8 @@ router.beforeEach(async (to, from, next) => {
 
   if (!needsGuest && !needsAdmin) return next();
 
+  const { auth, authReady } = await import("../firebase");
+  await authReady;
   const user = auth.currentUser;
 
   if (import.meta.env.DEV) {

@@ -30,7 +30,15 @@ const stocks = [
     <ul class="stocks__grid">
       <li v-for="stock in stocks" :key="stock.title" class="stocks__card">
         <div class="stocks__image-wrap">
-          <img :src="stock.src" :alt="stock.title" class="stocks__image" />
+          <img
+            :src="stock.src"
+            :alt="stock.title"
+            class="stocks__image"
+            width="640"
+            height="400"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
         <div class="stocks__body">
           <h3>{{ stock.title }}</h3>
@@ -46,6 +54,8 @@ const stocks = [
 
 .stocks
   padding: 2rem 0 4rem
+  content-visibility: auto
+  contain-intrinsic-size: 720px
 
 .heading-1
   display: flex

@@ -29,9 +29,9 @@ provide("socialLinks", socialLinks);
   <div class="container">
     <Header />
 
-    <div class="app-content">
+    <main class="app-content">
       <RouterView />
-    </div>
+    </main>
 
     <Footer />
 

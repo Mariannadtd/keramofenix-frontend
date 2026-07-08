@@ -7,6 +7,7 @@ import { useCartStore } from "../stores/cart";
 import Button from "../components/UI/Button.vue";
 import ProductAttributes from "../components/ProductAttributes.vue";
 import Badge from "../components/UI/Badge.vue";
+import { productPreviewUrl, thumbnailUrl } from "../lib/images";
 import {
   SITE_NAME,
   SITE_PHONE,
@@ -195,7 +196,15 @@ function prev() {
       <div class="content__wrapper">
         <div class="gallery">
           <div v-if="images.length" class="main-frame" @click="open(0)">
-            <img :src="images[0]" class="main-img" :alt="productName()" />
+            <img
+              :src="productPreviewUrl(images[0])"
+              class="main-img"
+              :alt="productName()"
+              width="1200"
+              height="900"
+              fetchpriority="high"
+              decoding="async"
+            />
             <div class="pd-badges">
               <Badge
                 v-if="isInCart"
@@ -220,9 +229,13 @@ function prev() {
             <img
               v-for="(src, i) in images"
               :key="i"
-              :src="src"
+              :src="thumbnailUrl(src)"
               class="thumb-img"
               @click="open(i)"
+              width="160"
+              height="160"
+              loading="lazy"
+              decoding="async"
               :alt="`${productName()} — фото ${i + 1}`"
             />
           </div>
@@ -248,7 +261,12 @@ function prev() {
         <button class="nav prev" @click="prev">
           <img src="../assets/img/nav-arrow.png" alt="" />
         </button>
-        <img :src="images[currentIdx]" class="modal-img" :alt="productName()" />
+        <img
+          :src="productPreviewUrl(images[currentIdx])"
+          class="modal-img"
+          :alt="productName()"
+          decoding="async"
+        />
         <button class="nav next" @click="next">
           <img src="../assets/img/nav-arrow.png" alt="" />
         </button>

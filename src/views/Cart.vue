@@ -8,6 +8,7 @@ import Advantages from "../components/Advantages.vue";
 import Map from "../components/Map.vue";
 import CartSizePicker from "@/components/CartSizePicker.vue";
 import HowTo from "../components/HowTo.vue";
+import { thumbnailUrl } from "../lib/images";
 
 import { db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -224,7 +225,15 @@ async function submitOrder(contactData) {
       <div class="cart-group">
         <ul class="cart-list">
           <li v-for="item in items" :key="item.id" class="cart-item">
-            <img :src="item.images?.[0]" alt="" class="c-img" />
+            <img
+              :src="thumbnailUrl(item.images?.[0])"
+              alt=""
+              class="c-img"
+              width="160"
+              height="160"
+              loading="lazy"
+              decoding="async"
+            />
 
             <div class="c-title">{{ item.name }}</div>
 

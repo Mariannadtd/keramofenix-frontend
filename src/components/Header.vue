@@ -88,7 +88,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <header ref="headerRef" class="site-header" v-auto-animate>
+  <header ref="headerRef" class="site-header">
     <div class="header__top">
       <button
         :class="['burger', { open: showNav }]"
@@ -104,6 +104,9 @@ onBeforeUnmount(() => {
         <img
           class="header__logo_img"
           src="../assets/img/logo.png"
+          width="64"
+          height="64"
+          decoding="async"
           alt="Логотип"
         />
         <div>
@@ -138,7 +141,6 @@ onBeforeUnmount(() => {
   <nav
     id="main-nav"
     ref="navRef"
-    v-auto-animate
     :class="[
       'nav-container',
       { nav__active: showNav, nav__pinned: isNavPinned },

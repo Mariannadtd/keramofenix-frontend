@@ -1,7 +1,5 @@
 <script setup>
 import { onMounted, ref, computed } from "vue";
-import { db } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
 import Button from "../components/UI/Button.vue";
 import Modal from "../components/UI/Modal.vue";
 import Catalog from "../components/Catalog.vue";
@@ -45,6 +43,10 @@ const categoryLinks = [
 
 onMounted(async () => {
   try {
+    const [{ db }, { collection, getDocs }] = await Promise.all([
+      import("../firebase"),
+      import("firebase/firestore"),
+    ]);
     const snapshot = await getDocs(collection(db, "products"));
     products.value = snapshot.docs.map((doc) => ({
       id: doc.id,
@@ -126,6 +128,9 @@ const fittingsRandom = computed(() =>
             src="../assets/img/arrow-right.png"
             alt=""
             aria-hidden="true"
+            width="22"
+            height="22"
+            decoding="async"
           />
         </button>
       </nav>
@@ -156,6 +161,7 @@ const fittingsRandom = computed(() =>
       title-tag="h2"
       :products="interiorsRandom"
       :loading="loading"
+      :eager-count="2"
     />
     <Button class="home__button" @click="goTo('interiors')">
       Показать ещё
@@ -163,6 +169,9 @@ const fittingsRandom = computed(() =>
         class="home__button_img"
         src="../assets/img/arrow-right.png"
         alt="arrow-right"
+        width="20"
+        height="20"
+        decoding="async"
       />
     </Button>
 
@@ -179,6 +188,9 @@ const fittingsRandom = computed(() =>
         class="home__button_img"
         src="../assets/img/arrow-right.png"
         alt="arrow-right"
+        width="20"
+        height="20"
+        decoding="async"
       />
     </Button>
 
@@ -195,6 +207,9 @@ const fittingsRandom = computed(() =>
         class="home__button_img"
         src="../assets/img/arrow-right.png"
         alt="arrow-right"
+        width="20"
+        height="20"
+        decoding="async"
       />
     </Button>
 
@@ -211,6 +226,9 @@ const fittingsRandom = computed(() =>
         class="home__button_img"
         src="../assets/img/arrow-right.png"
         alt="arrow-right"
+        width="20"
+        height="20"
+        decoding="async"
       />
     </Button>
 
@@ -227,6 +245,9 @@ const fittingsRandom = computed(() =>
         class="home__button_img"
         src="../assets/img/arrow-right.png"
         alt="arrow-right"
+        width="20"
+        height="20"
+        decoding="async"
       />
     </Button>
   </section>
@@ -374,6 +395,10 @@ const fittingsRandom = computed(() =>
   margin: 0
 
 .home
+  &__catalog
+    content-visibility: auto
+    contain-intrinsic-size: 900px
+
   &__button
     font-size: 1.4rem
     display: flex

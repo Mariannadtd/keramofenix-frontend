@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { useCartStore } from "../stores/cart";
 import Button from "./UI/Button.vue";
 import Badge from "./UI/Badge.vue";
+import { cardImageUrl } from "../lib/images";
 
 const props = defineProps({
   image: { type: String, default: "" },
@@ -12,9 +13,12 @@ const props = defineProps({
   isHit: { type: [String, Boolean], default: "" },
   isExhibit: { type: [String, Boolean], default: "" },
   category: { type: String, default: "" },
+  loading: { type: String, default: "lazy" },
+  fetchpriority: { type: String, default: "auto" },
 });
 
 const cart = useCartStore();
+const previewImage = computed(() => cardImageUrl(props.image));
 
 const isInCart = computed(() =>
   cart.items.some((item) => item.id === props.id)
@@ -56,7 +60,16 @@ function onAddToCart() {
     </div>
 
     <div class="card__content">
-      <img :src="image" :alt="title" class="card__image" />
+      <img
+        :src="previewImage"
+        :alt="title"
+        class="card__image"
+        width="520"
+        height="520"
+        :loading="loading"
+        decoding="async"
+        :fetchpriority="fetchpriority"
+      />
       <h3 class="card__title">{{ title }}</h3>
     </div>
 

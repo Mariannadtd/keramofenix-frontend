@@ -9,6 +9,7 @@ const props = defineProps({
   titleMargin: { type: String, default: "8rem auto 4rem" },
   loading: { type: Boolean, default: false },
   skeletonCount: { type: Number, default: 6 },
+  eagerCount: { type: Number, default: 0 },
 });
 </script>
 
@@ -16,7 +17,7 @@ const props = defineProps({
   <div class="catalog-root">
     <component :is="titleTag" class="heading-1">{{ title }}</component>
 
-    <div v-auto-animate class="search-wrapper">
+    <div class="search-wrapper">
       <slot name="search" />
     </div>
 
@@ -28,7 +29,7 @@ const props = defineProps({
 
     <div v-else class="cards">
       <Card
-        v-for="product in products"
+        v-for="(product, index) in products"
         :key="product.id"
         :id="product.id"
         :image="product.images?.[0] || ''"
@@ -38,6 +39,8 @@ const props = defineProps({
         :isHit="product.isHit"
         :isExhibit="product.isExhibit"
         :category="product.category"
+        :loading="index < eagerCount ? 'eager' : 'lazy'"
+        :fetchpriority="index < eagerCount ? 'high' : 'auto'"
       />
     </div>
 

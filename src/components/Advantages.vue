@@ -32,7 +32,14 @@ const advantages = [
     <h2 class="heading-1">Выбирая нас вы получаете:</h2>
     <ul>
       <li v-for="ad in advantages" :key="ad.title">
-        <img :src="ad.src" alt="" />
+        <img
+          :src="ad.src"
+          alt=""
+          width="64"
+          height="64"
+          loading="lazy"
+          decoding="async"
+        />
         <p>{{ ad.title }}</p>
       </li>
     </ul>
@@ -47,6 +54,8 @@ const advantages = [
   justify-content: center
 .advantages
   padding-bottom: 2rem
+  content-visibility: auto
+  contain-intrinsic-size: 360px
   ul
     list-style: none
     margin: 0

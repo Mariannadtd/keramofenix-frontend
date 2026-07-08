@@ -16,7 +16,13 @@ const itemCount = computed(() => cartStore.totalCount);
       :class="{ 'is-cart': link.name === 'cart' }"
     >
       <router-link v-if="link.name === 'cart'" to="/cart" class="social-link">
-        <img :src="link.src" :alt="link.name" />
+        <img
+          :src="link.src"
+          :alt="link.name"
+          width="38"
+          height="38"
+          decoding="async"
+        />
         <span v-if="itemCount > 0" class="cart-badge">{{ itemCount }}</span>
       </router-link>
 
@@ -27,7 +33,13 @@ const itemCount = computed(() => cartStore.totalCount);
         rel="noopener"
         class="social-link"
       >
-        <img :src="link.src" :alt="link.name" />
+        <img
+          :src="link.src"
+          :alt="link.name"
+          width="38"
+          height="38"
+          decoding="async"
+        />
       </a>
     </li>
   </ul>
