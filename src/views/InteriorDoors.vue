@@ -7,19 +7,23 @@ import SkeletonCard from "../components/UI/Preloader.vue";
 import SeoTextBlock from "../components/SeoTextBlock.vue";
 import { useCatalogPage } from "../composables/useCatalogPage";
 import {
+  applyShowroomAvailabilityFilter,
   applySearch,
   applySingleValueFilters,
+  showroomAvailabilityFilter,
   sortByPrice,
   sortFilter,
 } from "../lib/catalogFilters";
 
 const defaultFilters = () => ({
   sort: "",
+  isExhibit: "",
   form: "",
 });
 
 const filtersConfig = [
   sortFilter,
+  showroomAvailabilityFilter,
   {
     key: "form",
     label: "Вид",
@@ -54,7 +58,10 @@ const {
   defaultFilters,
   processProducts: ({ products, searchQuery, filters }) => {
     const searched = applySearch(products, searchQuery);
-    const filtered = applySingleValueFilters(searched, filters, ["form"]);
+    const filtered = applyShowroomAvailabilityFilter(
+      applySingleValueFilters(searched, filters, ["form"]),
+      filters.isExhibit
+    );
     return sortByPrice(filtered, filters.sort);
   },
 });

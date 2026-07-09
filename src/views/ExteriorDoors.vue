@@ -7,8 +7,10 @@ import SkeletonCard from "../components/UI/Preloader.vue";
 import SeoTextBlock from "../components/SeoTextBlock.vue";
 import { useCatalogPage } from "../composables/useCatalogPage";
 import {
+  applyShowroomAvailabilityFilter,
   applySearch,
   applySingleValueFilters,
+  showroomAvailabilityFilter,
   sortByPrice,
   sortFilter,
 } from "../lib/catalogFilters";
@@ -16,6 +18,7 @@ import { exteriorFormOptions } from "../lib/catalogSchema";
 
 const defaultFilters = () => ({
   sort: "",
+  isExhibit: "",
   form: "",
   side: "",
   latch: "",
@@ -49,7 +52,7 @@ const baseFilters = [
   },
 ];
 
-const filtersConfig = [sortFilter, ...baseFilters];
+const filtersConfig = [sortFilter, showroomAvailabilityFilter, ...baseFilters];
 
 const filterKeys = baseFilters.map((filter) => filter.key);
 
@@ -78,7 +81,10 @@ const {
   defaultFilters,
   processProducts: ({ products, searchQuery, filters }) => {
     const searched = applySearch(products, searchQuery);
-    const filtered = applySingleValueFilters(searched, filters, filterKeys);
+    const filtered = applyShowroomAvailabilityFilter(
+      applySingleValueFilters(searched, filters, filterKeys),
+      filters.isExhibit
+    );
     return sortByPrice(filtered, filters.sort);
   },
 });

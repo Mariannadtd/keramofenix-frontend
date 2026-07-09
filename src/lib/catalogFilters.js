@@ -25,6 +25,13 @@ export const sortFilter = {
   ],
 };
 
+export const showroomAvailabilityFilter = {
+  key: "isExhibit",
+  type: "toggle",
+  label: "Есть в салоне",
+  value: "да",
+};
+
 export function applySearch(items, query, normalize = normalizeText) {
   const search = normalize(query);
   if (!search) return items;
@@ -47,6 +54,28 @@ export function applySingleValueFilters(
   }
 
   return result;
+}
+
+export function isPositiveFlag(value, normalize = normalizeText) {
+  if (value === true) return true;
+
+  const normalized = normalize(value);
+  return (
+    normalized === "да" ||
+    normalized === "есть" ||
+    normalized === "true" ||
+    normalized === "yes"
+  );
+}
+
+export function applyShowroomAvailabilityFilter(
+  items,
+  selectedValue,
+  normalize = normalizeText
+) {
+  if (!normalize(selectedValue)) return items;
+
+  return items.filter((item) => isPositiveFlag(item.isExhibit, normalize));
 }
 
 export function applyMultiValueFilter(

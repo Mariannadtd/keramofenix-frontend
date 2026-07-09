@@ -8,8 +8,10 @@ import SkeletonCard from "../components/UI/Preloader.vue";
 import SeoTextBlock from "../components/SeoTextBlock.vue";
 import { useCatalogPage } from "../composables/useCatalogPage";
 import {
+  applyShowroomAvailabilityFilter,
   applySearch,
   applySingleValueFilters,
+  showroomAvailabilityFilter,
   sortByPrice,
   sortFilter,
 } from "../lib/catalogFilters";
@@ -22,6 +24,7 @@ import {
 
 const initialFilterState = () => ({
   sort: "",
+  isExhibit: "",
   fittingGroup: "",
   fittingSubtype: "",
   color: "",
@@ -94,10 +97,9 @@ const {
   onLoadError: (error) => console.error("fittings loadMore error:", error),
   processProducts: ({ products, searchQuery, filters }) => {
     const searched = applySearch(products, searchQuery);
-    const filtered = applySingleValueFilters(
-      searched,
-      filters,
-      simpleFilterKeys
+    const filtered = applyShowroomAvailabilityFilter(
+      applySingleValueFilters(searched, filters, simpleFilterKeys),
+      filters.isExhibit
     );
     return sortByPrice(filtered, filters.sort);
   },
@@ -110,9 +112,9 @@ const subtypeOptions = computed(() => {
 });
 
 const filtersConfig = computed(() => {
-  const conf = [sortFilter, ...baseFilters];
+  const conf = [sortFilter, showroomAvailabilityFilter, ...baseFilters];
   if (filterState.value.fittingGroup) {
-    conf.splice(2, 0, {
+    conf.splice(3, 0, {
       key: "fittingSubtype",
       label: "Тип",
       type: "select",

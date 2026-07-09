@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "door-renaissance",
     "public": "dist",
     "predeploy": ["npm run build"],
     "trailingSlash": false,

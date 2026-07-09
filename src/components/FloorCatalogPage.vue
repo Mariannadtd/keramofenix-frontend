@@ -9,9 +9,11 @@ import SeoTextBlock from "./SeoTextBlock.vue";
 import { useCatalogPage } from "../composables/useCatalogPage";
 import {
   applyMultiValueFilter,
+  applyShowroomAvailabilityFilter,
   applySearch,
   applySingleValueFilters,
   normalizeFloorText,
+  showroomAvailabilityFilter,
   sortByPrice,
   sortFilter,
 } from "../lib/catalogFilters";
@@ -26,6 +28,7 @@ const props = defineProps({
 
 const defaultFilters = () => ({
   sort: "",
+  isExhibit: "",
   form: "",
   structure: "",
   class: "",
@@ -179,6 +182,12 @@ const {
       normalizeFloorText
     );
 
+    arr = applyShowroomAvailabilityFilter(
+      arr,
+      filters.isExhibit,
+      normalizeFloorText
+    );
+
     return sortByPrice(arr, filters.sort);
   },
 });
@@ -193,10 +202,20 @@ const canShowEmptyState = computed(() => !props.lockedForm || !hasMore.value);
 
 const filtersConfig = computed(() => {
   if (isLaminate(selectedForm.value))
-    return [sortFilter, ...visibleBaseFilters.value, ...lamFilters];
+    return [
+      sortFilter,
+      showroomAvailabilityFilter,
+      ...visibleBaseFilters.value,
+      ...lamFilters,
+    ];
   if (isQuartzVinyl(selectedForm.value))
-    return [sortFilter, ...visibleBaseFilters.value, ...quartzFilters];
-  return [sortFilter, ...visibleBaseFilters.value];
+    return [
+      sortFilter,
+      showroomAvailabilityFilter,
+      ...visibleBaseFilters.value,
+      ...quartzFilters,
+    ];
+  return [sortFilter, showroomAvailabilityFilter, ...visibleBaseFilters.value];
 });
 
 watch(

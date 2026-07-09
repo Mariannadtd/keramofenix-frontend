@@ -72,6 +72,17 @@ function clearKey(key) {
   state.value[key] = Array.isArray(state.value[key]) ? [] : "";
 }
 
+function isToggleActive(f) {
+  const value = state.value[f.key];
+  if (value === true) return true;
+  return norm(value) === norm(f.value ?? "да");
+}
+
+function toggleFlag(f) {
+  state.value[f.key] = isToggleActive(f) ? "" : f.value ?? "да";
+  closeAll();
+}
+
 const labelFor = (f) => {
   const v = state.value[f.key];
   if (f.type === "multiselect") {
@@ -86,7 +97,16 @@ const labelFor = (f) => {
 <template>
   <div class="filters-inline" ref="rootRef">
     <div v-for="f in filters" :key="f.key" class="filter-block">
-      <div v-if="f.type === 'select' || f.type === 'sort'" class="psd">
+      <label v-if="f.type === 'toggle'" class="filter-toggle">
+        <input
+          type="checkbox"
+          :checked="isToggleActive(f)"
+          @change="toggleFlag(f)"
+        />
+        <span>{{ f.label }}</span>
+      </label>
+
+      <div v-else-if="f.type === 'select' || f.type === 'sort'" class="psd">
         <button class="psd__toggle" type="button" @click="toggle(f.key)">
           {{ labelFor(f) }}
           <span class="psd__arrow">▾</span>
@@ -173,6 +193,28 @@ const labelFor = (f) => {
   display: inline-flex
   position: relative
   flex: 0 0 auto
+
+.filter-toggle
+  padding: .7rem 1rem
+  border: none
+  border-radius: .5rem
+  background: white
+  cursor: pointer
+  display: inline-flex
+  align-items: center
+  justify-content: center
+  gap: .5rem
+  min-width: 12rem
+  font-size: 1.05rem
+  font-family: "Gidole", sans-serif
+  color: gray
+  line-height: 1
+  user-select: none
+  input
+    width: 1rem
+    height: 1rem
+    accent-color: var(--third-color)
+    cursor: pointer
 
 .psd__toggle
   padding: .7rem 1rem
