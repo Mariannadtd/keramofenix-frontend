@@ -1,4 +1,5 @@
 <script setup>
+import { RouterLink } from "vue-router";
 import SocialLinks from "./SocialLinks.vue";
 </script>
 
@@ -15,6 +16,9 @@ import SocialLinks from "./SocialLinks.vue";
         реального, в связи с различными настройками ваших устройств для
         просмотра.
       </p>
+      <nav class="footer__nav" aria-label="Документы магазина">
+        <RouterLink to="/return-policy">Возврат и обмен</RouterLink>
+      </nav>
     </div>
   </footer>
 </template>
@@ -30,4 +34,13 @@ import SocialLinks from "./SocialLinks.vue";
     margin: 0 auto
 .links
   margin-bottom: 2rem
+.footer__nav
+  display: flex
+  justify-content: center
+  margin-top: 1.5rem
+  a
+    color: var(--third-color)
+    font-weight: 800
+    text-decoration: underline
+    text-underline-offset: .25rem
 </style>

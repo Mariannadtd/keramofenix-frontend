@@ -20,6 +20,7 @@ const ProductDetail = () => import("../views/ProductDetail.vue");
 const CartView = () => import("../views/Cart.vue");
 const AboutView = () => import("../views/AboutView.vue");
 const ContactsView = () => import("../views/ContactsView.vue");
+const ReturnPolicyView = () => import("../views/ReturnPolicyView.vue");
 const AdminLoginView = () => import("../views/AdminView.vue");
 const AdminPanel = () => import("../views/AdminPanel.vue");
 
@@ -151,6 +152,17 @@ const router = createRouter({
         description:
           "Контакты КерамоФеникс в Сочи: адреса салонов на ул. Гагарина 63 и ул. Донская 3/3, телефон +7 988 406-88-87, часы работы и карта проезда.",
         canonical: "https://keramofenix.ru/contacts",
+      },
+    },
+    {
+      path: "/return-policy",
+      name: "return-policy",
+      component: ReturnPolicyView,
+      meta: {
+        title: "Возврат и обмен — КерамоФеникс",
+        description:
+          "Правила возврата и обмена товаров КерамоФеникс в Сочи: условия возврата товара надлежащего качества, индивидуальных заказов, брака и повреждений.",
+        canonical: "https://keramofenix.ru/return-policy",
       },
     },
     {
